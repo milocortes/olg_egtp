@@ -27,7 +27,7 @@ Los tomadores de decisión también definen las incertidumbres que pueden afecta
 Esta información es organizada en una matriz de 2X2 llamada“XLRM” (Lempert et al. 2003), conformada por incertidumbres exógenas (X), polı́ticas (L), relaciones (R), y medidas de desempeño(M).
 
 
-## Matrix XRLM
+## Matrix XLRM
 
 ![XLRM](imgs/xlrm_7_03.png)
 
