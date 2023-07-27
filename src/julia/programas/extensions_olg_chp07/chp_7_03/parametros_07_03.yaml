@@ -1,0 +1,32 @@
+simulacion:
+  # Size of LHS sampling
+  LHS_sampling : 2000
+parametros:
+  # Transition time
+  TT : [25,25]
+  # Maximum age
+  JJ : [3, 3]
+  # Retirement age
+  JR : [3, 3]
+  # Coefficient of relative risk aversion (or the reciprocal of the elasticity of intertemporal substitution)
+  gamma : [0.4, 0.5]
+  # Time discount factor
+  beta : [0.85, 0.95]
+  # Capital intensity elasticity
+  alpha : [0.25, 0.35]
+  # Depreciation rate
+  delta : [0.0, 0.05]
+  # Linear scale factor of intensity between education function
+  xi : [1.9, 2.1]
+  # Education time elasticity  in education function
+  upsi : [0.4, 0.6]
+  # Strength externality of the average stock human capital per worker 
+  epsi : [0.0, 0.05]
+  # Fraction of parental human capital from parents to children
+  mu : [0.7, 0.9]
+  # Gauss-Seidel damping factor
+  damp : [0.3, 0.3]
+  # Maximum iteration
+  itermax : [200, 200]
+  # Deficit path
+  gy : [0.0, 0.05]

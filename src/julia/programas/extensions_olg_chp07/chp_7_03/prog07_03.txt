@@ -1,0 +1,26 @@
+Equilibrium: Year 0
+
+ Goods Market  
+      Y      C      G      I      TB      DIFF
+   0.96    0.70    0.21    0.05   0.00   0.00 
+ 100.00   72.76   22.00    5.24   0.00
+
+ Capital Market  
+      A      K      BB      BA      BF      r
+   0.15    0.15    0.00    0.00   0.00   1.96 
+  15.34   15.34    0.00    0.00   0.00
+
+ Labor Market  
+     LL      e   n_e   w
+   2.14   0.11   0.34   0.31
+
+ GOVERMENT  
+   tauc   tauw   taur   taup   tauk    TXR     DD     rB  
+   0.30   0.00   0.00   0.00   0.00   22.00   0.00   0.00
+
+ Age    cons     wn       pen      asset    Diff      
+  1     0.19     0.31     0.00     0.00     0.00
+  2     0.31     0.53     0.00     0.03     -0.00
+  3     0.50     0.00     0.00     0.22     0.00
+
+
