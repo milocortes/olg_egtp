@@ -403,7 +403,9 @@ function get_Transition()
             decisions(it)
         end
 
-        #if(lsra_on)call lsra()
+        if(lsra_on) 
+            lsra()
+        end
 
         for it in 1:TT
             quantities(it)
@@ -438,4 +440,122 @@ end
     endif
 
     =#
+end 
+
+
+
+# subroutine to compute household utility
+function utility(it)
+
+    # for first generation
+    util[1, it] = 0.0
+    PPs = 1.0
+    for ij in 1:JJ
+        itp = year(it, 1, ij)
+        PPs = PPs*psi[ij, itp]
+        util[1, it] = util[1, it] + beta^(ij-1)*PPs*c[ij, itp]^egam/egam
+    end
+
+    # for current total popilation if year = 0 or 1
+    if(it < 2)
+        for ij in 2:JJ
+            util[ij, it] = c[ij, it]^egam/egam
+            PPs = 1.0
+            for ijp in ij+1:JJ
+                itp = year(it, ij, ijp)
+                PPs = PPs*psi[ijp, itp]
+                util[ij, it] = util[ij, it] + beta^(ijp-ij)*PPs*c[ijp, itp]^egam/egam
+            end
+        end
+    end
+
+end
+
+# subroutine for calculating lsra transfers
+function lsra()
+
+    # calculate utility for each generation
+    for it in 1:TT
+        utility(it)
+    end
+
+    # transfers to old generations
+    BA .= 0.0
+    for ij in 2:JJ
+        v[-ij+2] = v[-ij+2] + get_W(ij, 1)*((util[ij, 0]/util[ij, 1])^(1.0/egam)-1.0)
+        BA[2] = BA[2] + v[-ij+2]*m[ij, 1]
+    end
+
+    # long run equilibrium
+    PVV  = v[TT]*(1.0+r[TT])/(r[TT]-n_p[TT])
+    sum1 = get_W(1, TT)*(1.0+r[TT])/(r[TT]-n_p[TT])
+    sum2 = get_W(1, TT)*(util[1, TT]*egam)^(-1.0/egam)*(1.0+r[TT])/(r[TT]-n_p[TT])
+
+    # transition path
+    for it in TT-1:-1:1
+        itp = year(it, 1, 2)
+        PVV = PVV*(1.0+n_p[itp])/(1.0+r[itp]) + v[it]
+        sum1 = sum1*(1.0+n_p[itp])/(1.0+r[itp]) + get_W(1, it)
+        sum2 = sum2*(1.0+n_p[itp])/(1.0+r[itp]) + get_W(1, it)*(util[1,it]*egam)^(-1.0/egam)
+    end
+
+    # calculate ustar for future generations
+    ustar = ((sum1 - BA[2] - PVV)/sum2)^egam/egam
+
+    # calculate transfers to future generations and debt of LSRA
+    for it in 1:TT
+        v[it] = v[it] + get_W(1, it)*((ustar/util[1, it])^(1.0/egam)-1.0)
+
+        if(it == 2)
+            BA[2] = (BA[2] + v[1])/(1.0+n_p[2])
+        end
+        if(it > 2)
+            BA[it] = ((1.0+r[it-1])*BA[it-1] + v[it-1])/(1.0+n_p[it])
+        end
+    end
+
+end
+
+
+
+# initialize variables and government parameters
+initialize()
+
+# compute initial long-run equilibrium
+get_SteadyState()
+
+utility(0)
+
+#=
+# write output
+output_file =  open("prog07_03.txt","w")
+close(output_file)
+
+output_file =  open("prog07_03.txt","a")
+
+output(0, output_file)
+
+# output(0, 20)
+=#
+
+# calculate transition path
+get_Transition()
+
+
+
+#=
+for it in 1:TT
+    output(it, output_file)
+end
+close(output_file)
+=#
+
+# calculate transition with LSRA payments
+global lsra_on = true
+
+get_Transition()
+
+for it in 1:TT
+    HEV = ((util[1,it]/util[1,0])^(1.0/egam)-1.0)*100
+    println(round(HEV, digits =2))
 end 
