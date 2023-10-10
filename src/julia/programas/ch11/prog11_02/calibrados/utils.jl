@@ -955,5 +955,5 @@ function build_parameters(country, data_file_name)
 
     nu = (df_pais.avh[1]/(110*50))
 
-    return alpha, Omega, delta, nu, df_pais.np[1], df_pais.csh_g[1], df_pais.tauc[1]
+    return alpha, Omega, delta, nu, df_pais.np[1], df_pais.csh_g[1], df_pais.tauc[1], df_pais.kappa[1]
 end 

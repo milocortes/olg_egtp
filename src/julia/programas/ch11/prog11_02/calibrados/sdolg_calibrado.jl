@@ -15,9 +15,9 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-alpha_param, Omega_param, delta_param, nu_param, np_param, gy_param , tauc_param = build_parameters("MEX","parametros_olg.csv")
+alpha_param, Omega_param, delta_param, nu_param, np_param, gy_param , tauc_param, kappa_param = build_parameters("MEX","parametros_olg.csv")
 by_param = 0.44
-kappa_param = 0.3
+#kappa_param = 0.3
 
 # number of transition periods
 global TT = 40
@@ -194,8 +194,8 @@ pi, eta = rouwenhorst(NS, rho, sigma_eps, 0.0);
 eta = exp.(eta)
 
 # tax and transfers
-tax   .= 1
-tauc  .= 0.0
+tax   .= 10
+tauc  .= 0.16
 tauw  .= 0.3
 taur  .= 0.0
 taup  .= 0.1
@@ -232,7 +232,8 @@ capital_market = DataFrame(
           B = [BB[0], BB[0]/YY[0]*500], 
           BA = [BA[0], BA[0]/YY[0]*500],   
           r = [r[0], ""],
-          pa = [((1.0+r[0])^(1.0/5.0)-1.0)*100.0,  ""]) 
+          pa = [((1.0+r[0])^(1.0/5.0)-1.0)*100.0,  ""]
+);
 
 labour_market = DataFrame( 
     etiqueta = ["valor"],
@@ -240,14 +241,15 @@ labour_market = DataFrame(
     HH = [HH[0]*100],
     INC = [INC[0]],
     w = [w[0]]
-) 
+);
 
 good_market = DataFrame( 
           etiqueta = ["valor", "(in %)"],
           Y = [YY[0], YY[0]/YY[0]*100],
           C = [CC[0], CC[0]/YY[0]*100],  
           I = [II[0], II[0]/YY[0]*100], 
-          G = [GG[0], GG[0]/YY[0]*100]) 
+          G = [GG[0], GG[0]/YY[0]*100]
+); 
 
 gov_accounts = DataFrame(
     etiqueta = ["valor", "(in %)", "(rate)"],
@@ -257,14 +259,14 @@ gov_accounts = DataFrame(
     TOTAL = [taxrev[4,0], taxrev[4,0]/YY[0]*100, ""], 
     G = [GG[0], GG[0]/YY[0]*100, ""],
     B = [BB[0], (BB[0]*5.0)/YY[0]*100, ""]
-)
+);
 
 pension_system = DataFrame(
     etiqueta = ["valor", "(in %)"],
     TAUP = [taup[0]*w[0]*LL[0], taup[0]*100], 
     PEN = [pen[JR, 0], kappa[0]],
     PP = [PP[0], PP[0]/YY[0]*100]
-)
+);
 capital_market
 labour_market
 good_market

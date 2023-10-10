@@ -1,0 +1,95 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+%% Para incluir longtables
+\usepackage{longtable}
+%% Para incluir item en las celdas de la tabla
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\sffamily
+
+\begin{document}
+
+
+\begin{longtable}{p{5cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm}}  
+%\caption{Agentes del modelo}\label{tab:agentes}\\    %%%%<===
+\\[-1.8ex]\hline 
+\endhead
+\hline \\[-1.8ex] 
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{México} & \multicolumn{1}{c}{} & \multicolumn{2}{c}{Chile} \\
+\\ 
+\cline{2-3}
+\cline{5-6}
+\\ 
+          & Modelo  & Observado & & Modelo & Observado\\
+\\
+\hline \\[-1ex] 
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Indicadores
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+
+Mercado de Bienes (\% PIB)
+
+\par\tabitem Consumo Privado
+
+\par\tabitem Gasto Público
+
+\par\tabitem Inversión
+
+\par ""
+
+Ingresos por Impuestos (\% PIB) 
+
+\par\tabitem Impuestos al Consumo 
+
+\par\tabitem Impuestos al Ingreso
+
+\par ""
+
+Pagos a pensiones (\% PIB)
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+\par ""
+\par 66.36
+\par 18.20
+\par 15.43
+\par ""
+\par ""
+\par 10.61
+\par 11.34
+\par ""
+\par 4.34
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+\par ""
+\par 64.22
+\par 18.20
+\par 21.07
+\par ""
+\par ""
+\par 6.62
+\par 6.00
+\par ""
+\par 2.7
+
+&  &  &   \\
+ \\
+\hline 
+\hline \\[-1.8ex] 
+
+\end{longtable} 
+
+
+\end{document}
