@@ -1,0 +1,668 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{lscape}
+%% Para incluir longtables
+\usepackage{longtable}
+%% Para incluir item en las celdas de la tabla
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage[bottom=0.5cm, right=1.5cm, left=1.5cm, top=1.5cm]{geometry}
+
+\sffamily
+
+\begin{document}
+
+\begin{landscape}
+
+\begin{longtable}{p{5cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm}}  
+%\caption{Agentes del modelo}\label{tab:agentes}\\    %%%%<===
+\\[-1.8ex]\hline 
+\endhead
+\hline \\[-1.8ex] 
+\multicolumn{1}{c}{} & \multicolumn{3}{c}{México} & \multicolumn{4}{c}{Chile} &   \multicolumn{4}{c}{Costa Rica} \\
+%\cline{2-4}
+%\cline{6-7}
+\\ 
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Modelo}  & \multicolumn{1}{c}{Observado}  & \multicolumn{2}{c}{Modelo} & \multicolumn{1}{c}{Observado} & \multicolumn{2}{c}{Modelo} & \multicolumn{1}{c}{Observado}\\
+\\
+\cline{2-3}
+\cline{5-6}
+\cline{8-9}
+
+\\ 
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)}  & \multicolumn{1}{c}{}  & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)} & \multicolumn{1}{c}{}\\
+
+\\
+\hline \\[-1ex] 
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Indicadores
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+
+Mercado de Bienes (\% PIB)
+
+\par\tabitem Consumo Privado
+
+\par\tabitem Gasto Público
+
+\par\tabitem Inversión
+
+\par ""
+
+Tasas de impuestos (en \%) 
+
+\par\tabitem Consumo 
+
+\par\tabitem Ingreso
+
+\par\tabitem Ingreso medio
+
+\par\tabitem Ingreso máximo
+
+\par\tabitem Ingreso mínimo
+
+
+\par ""
+
+Ingresos por impuestos (\% PIB) 
+
+\par\tabitem Consumo 
+
+\par\tabitem Ingreso
+
+\par ""
+
+Gobierno (en \% PIB)
+\par\tabitem Endeudamiento público 
+\par\tabitem Flujo de deuda
+
+\par ""
+
+Sistema de pensiones 
+\par\tabitem Tasa de reemplazo
+\par\tabitem Pagos a pensiones (\% PIB)
+
+\par ""
+
+Otros
+\par\tabitem TC Poblacional (\%)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               MEXICO
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["MEX"]["sin_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["MEX"]["sin_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["MEX"]["sin_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["MEX"]["sin_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["MEX"]["sin_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["MEX"]["sin_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["MEX"]["sin_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["MEX"]["sin_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["MEX"]["sin_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["MEX"]["sin_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["MEX"]["sin_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["MEX"]["sin_probs"]["natalidad_modelo"]}}
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["MEX"]["con_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["MEX"]["con_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["MEX"]["con_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["MEX"]["con_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["MEX"]["con_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["MEX"]["con_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["MEX"]["con_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["MEX"]["con_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["MEX"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["MEX"]["con_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["MEX"]["con_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["MEX"]["con_probs"]["natalidad_modelo"]}}
+
+
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["MEX"]["con_probs"]["consumo_privado_observado"]}} 
+% Gasto Público % PIB 
+\par {{resultados["MEX"]["con_probs"]["gasto_publico_observado"]}} 
+% Inversión % PIB 
+\par {{resultados["MEX"]["con_probs"]["inversion_observado"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["MEX"]["con_probs"]["tax_consumo_observado"]}} 
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par {{resultados["MEX"]["con_probs"]["tax_ingreso_observado_medio"]}} 
+% Impuesto al Ingreso Máximo (Observado)
+\par {{resultados["MEX"]["con_probs"]["tax_ingreso_observado_max"]}} 
+% Impuesto al Ingreso Mínimo (Observado)
+\par {{resultados["MEX"]["con_probs"]["tax_ingreso_observado_min"]}} 
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["MEX"]["con_probs"]["recaudacion_tax_consumo_observado"]}}
+% Por impuesto al ingreso
+\par {{resultados["MEX"]["con_probs"]["recaudacion_tax_ingreso_observado"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["MEX"]["con_probs"]["endeudamiento_observado"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["MEX"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["MEX"]["con_probs"]["kappa_observado"]}}
+% Pagos a pensiones
+\par {{resultados["MEX"]["con_probs"]["pago_pensiones_observado"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["MEX"]["con_probs"]["natalidad_observada"]}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               CHILE
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CHL"]["sin_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CHL"]["sin_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["CHL"]["sin_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CHL"]["sin_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["CHL"]["sin_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CHL"]["sin_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["CHL"]["sin_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CHL"]["sin_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CHL"]["sin_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CHL"]["sin_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["CHL"]["sin_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CHL"]["sin_probs"]["natalidad_modelo"]}}
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CHL"]["con_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CHL"]["con_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["CHL"]["con_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CHL"]["con_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["CHL"]["con_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CHL"]["con_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["CHL"]["con_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CHL"]["con_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CHL"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CHL"]["con_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["CHL"]["con_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CHL"]["con_probs"]["natalidad_modelo"]}}
+
+
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CHL"]["con_probs"]["consumo_privado_observado"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CHL"]["con_probs"]["gasto_publico_observado"]}} 
+% Inversión % PIB 
+\par {{resultados["CHL"]["con_probs"]["inversion_observado"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CHL"]["con_probs"]["tax_consumo_observado"]}} 
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par {{resultados["CHL"]["con_probs"]["tax_ingreso_observado_medio"]}} 
+% Impuesto al Ingreso Máximo (Observado)
+\par {{resultados["CHL"]["con_probs"]["tax_ingreso_observado_max"]}} 
+% Impuesto al Ingreso Mínimo (Observado)
+\par {{resultados["CHL"]["con_probs"]["tax_ingreso_observado_min"]}} 
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CHL"]["con_probs"]["recaudacion_tax_consumo_observado"]}}
+% Por impuesto al ingreso
+\par {{resultados["CHL"]["con_probs"]["recaudacion_tax_ingreso_observado"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CHL"]["con_probs"]["endeudamiento_observado"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CHL"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CHL"]["con_probs"]["kappa_observado"]}}
+% Pagos a pensiones
+\par {{resultados["CHL"]["con_probs"]["pago_pensiones_observado"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CHL"]["con_probs"]["natalidad_observada"]}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               COSTA RICA
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Costa Rica
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CRI"]["sin_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CRI"]["sin_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["CRI"]["sin_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CRI"]["sin_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["CRI"]["sin_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CRI"]["sin_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["CRI"]["sin_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CRI"]["sin_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CRI"]["sin_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CRI"]["sin_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["CRI"]["sin_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CRI"]["sin_probs"]["natalidad_modelo"]}}
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades Costa Rica
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CRI"]["con_probs"]["consumo_privado_modelo"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CRI"]["con_probs"]["gasto_publico_modelo"]}} 
+% Inversión % PIB 
+\par {{resultados["CRI"]["con_probs"]["inversion_modelo"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CRI"]["con_probs"]["tax_consumo_modelo"]}} 
+% Impuesto al Ingreso
+\par {{resultados["CRI"]["con_probs"]["tax_ingreso_modelo"]}} 
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CRI"]["con_probs"]["recaudacion_tax_consumo_modelo"]}}
+% Por impuesto al ingreso
+\par {{resultados["CRI"]["con_probs"]["recaudacion_tax_ingreso_modelo"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CRI"]["con_probs"]["endeudamiento_modelo"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CRI"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CRI"]["con_probs"]["kappa_modelo"]}}
+% Pagos a pensiones
+\par {{resultados["CRI"]["con_probs"]["pago_pensiones_modelo"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CRI"]["con_probs"]["natalidad_modelo"]}}
+
+
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados Costa Rica
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par {{resultados["CRI"]["con_probs"]["consumo_privado_observado"]}} 
+% Gasto Público % PIB 
+\par {{resultados["CRI"]["con_probs"]["gasto_publico_observado"]}} 
+% Inversión % PIB 
+\par {{resultados["CRI"]["con_probs"]["inversion_observado"]}} 
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par {{resultados["CRI"]["con_probs"]["tax_consumo_observado"]}} 
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par {{resultados["CRI"]["con_probs"]["tax_ingreso_observado_medio"]}} 
+% Impuesto al Ingreso Máximo (Observado)
+\par {{resultados["CRI"]["con_probs"]["tax_ingreso_observado_max"]}} 
+% Impuesto al Ingreso Mínimo (Observado)
+\par {{resultados["CRI"]["con_probs"]["tax_ingreso_observado_min"]}} 
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par {{resultados["CRI"]["con_probs"]["recaudacion_tax_consumo_observado"]}}
+% Por impuesto al ingreso
+\par {{resultados["CRI"]["con_probs"]["recaudacion_tax_ingreso_observado"]}}
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Público
+\par {{resultados["CRI"]["con_probs"]["endeudamiento_observado"]}}
+% Costo necesitado para mantener el nivel de deuda constante
+\par {{resultados["CRI"]["con_probs"]["deuda_constante"]}}
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par {{resultados["CRI"]["con_probs"]["kappa_observado"]}}
+% Pagos a pensiones
+\par {{resultados["CRI"]["con_probs"]["pago_pensiones_observado"]}}
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par {{resultados["CRI"]["con_probs"]["natalidad_observada"]}}
+
+ \\
+\hline 
+\hline \\[-1.8ex] 
+
+\end{longtable} 
+\end{landscape}
+
+
+\end{document}

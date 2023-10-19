@@ -147,10 +147,68 @@ OECD-Pension replacement rates:
 """
 
 oecd_prr = pd.read_csv("oecd/pensions_at_a_glance/PAG_08102023230102857.csv")
-oecd_prr = oecd_prr[oecd_prr.Country.isin(['Chile', "Costa Rica", "Mexico"])].query(f"Indicator == 'Net pension replacement rate, Male, 1.00 of AW'")
+oecd_prr = oecd_prr[oecd_prr.Country.isin(['Chile', "Costa Rica", "Mexico"])].query(f"Indicator == 'Net pension replacement rate, Male, 1.50 of AW'")
 oecd_prr = oecd_prr[["COU","Value"]]
 oecd_prr = oecd_prr.rename(columns = {"Value" : "kappa"})
 oecd_prr["kappa"] /= 100
+
+"""
+OECD-Tax Database:
+    + pop_growth_rate
+    + fertility_rate
+    + vat_tax
+    + w_tax
+
+Impuestos sobre los salarios :
+https://www.oecd.org/tax/tax-policy/Impuestos-sobre-los-salarios-costa-rica.pdf
+https://www.oecd.org/tax/tax-policy/Impuestos-sobre-los-salarios-chile.pdf
+https://www.oecd.org/tax/tax-policy/Impuestos-sobre-los-salarios-mexico.pdf
+
+"""
+
+oecd_tax_db = pd.read_csv("tax_data/output/tax_data.csv")
+
+#### Imputamos la tasa de impuesto sobre el VA de Costa Rica constante en todo el periodo
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CRI',"vat_tax"] = 13
+
+"""
+#### Ajustamos datos de impuestos laborales
+    + MEX aplica las siguientes tasas de impuestos:
+        - [1.92, 6.4, 10.88, 16.0, 17.92, 21.36, 23.52, 30.0, 32.0, 34.0, 35.0]
+    + CHI aplica las siguientes tasas de impuestos:
+        - [0.0, 4.0, 8.0, 13.5, 23.0, 30.4, 35.0, 40.0]
+    + CRI aplica una tasa impositiva neta media de los trabajadores es una medida del impuesto neto sobre la renta salarial pagado directamente por el trabajador.
+    En Costa Rica, en 2021, el trabajador soltero promedio estuvo sujeto a una tasa impositiva neta media de 10.5%, en comparación con la media de la OCDE de 24.6%.
+
+Se construyen tres tasas de impuestos sobre el ingreso: 
+    1) Tasa mínima de impuesto (corresponde al threshold más bajo de los datos de OCDE)
+    2) Tasa media de impuesto (corresponde al dato de las infografías de impuestos sobre los salarios de OCDE)
+    3) Tasa máxima impuesto (corresponde al threshold más alto de los datos de OCDE).
+
+NOTA: Dado que CRI no tiene dato de thresholds, usamos el valor máximo y mínimo de impuesto sobre el ingreso de OCDE 
+
+"""
+oecd_tax_db["tax_w_ocde_min"] = 0.0
+oecd_tax_db["tax_w_ocde_max"] = 0.0
+oecd_tax_db["tax_w_ocde_medio"] = 0.0
+
+oecd_tax_db.loc[oecd_tax_db.countrycode=='MEX', "tax_w_ocde_min"] = 0.0192
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CHL', "tax_w_ocde_min"] = 0.0
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CRI', "tax_w_ocde_min"] = 0.0
+
+oecd_tax_db.loc[oecd_tax_db.countrycode=='MEX', "tax_w_ocde_max"] = 0.35
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CHL', "tax_w_ocde_max"] = 0.40
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CRI', "tax_w_ocde_max"] = 0.246
+
+oecd_tax_db.loc[oecd_tax_db.countrycode=='MEX', "tax_w_ocde_medio"] = 0.102
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CHL', "tax_w_ocde_medio"] = 0.070
+oecd_tax_db.loc[oecd_tax_db.countrycode=='CRI', "tax_w_ocde_medio"] = 0.105
+
+oecd_tax_db = oecd_tax_db.query(f"year=={year_analysis}")
+oecd_tax_db = oecd_tax_db[["countrycode", "pop_growth_rate", "fertility_rate", "vat_tax", "tax_w_ocde_min", "tax_w_ocde_max", "tax_w_ocde_medio"]]
+oecd_tax_db.pop_growth_rate /= 100.0
+oecd_tax_db.fertility_rate /= 100.0
+oecd_tax_db.vat_tax = oecd_tax_db.vat_tax.astype(float)/100
 
 #### Join data
 df = pd.concat([pwt.set_index("countrycode"),
@@ -158,11 +216,11 @@ df = pd.concat([pwt.set_index("countrycode"),
                 oecd_rs_gpd.set_index("COU"), 
                 oecd_rs_total_tax.set_index("COU"), 
                 oecd_prr.set_index("COU"), 
-                oecd_pep.set_index("countrycode")], axis = 1)
+                oecd_pep.set_index("countrycode"),
+                oecd_tax_db.set_index("countrycode")], axis = 1)
+
 df.index.name = 'countrycode'       
 df = df.reset_index()         
-
-df["tauc"] = [0.19, 0.13, 0.16]
-df["np"] = [0.019,0.018,0.022]      
+   
 df.to_csv("parametros_olg.csv", index = False)
 

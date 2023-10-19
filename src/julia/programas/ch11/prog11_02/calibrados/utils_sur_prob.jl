@@ -1,3 +1,7 @@
+using CSV 
+using DataFrames 
+using Query
+
 #=#############################################################################
 # SUBROUTINE discretize_AR
 #
@@ -8,9 +12,6 @@
 #            approximations to highly persistent processes, Review of Economic
 #            Dynamics, Vol. 13, No. 3, 2010, 701-714.
 =##############################################################################
-using CSV 
-using DataFrames 
-using Query
 
 function rouwenhorst(N::Integer, ρ::Real, σ::Real, μ::Real=0.0)
     σ_y = σ / sqrt(1-ρ^2)
@@ -22,7 +23,7 @@ function rouwenhorst(N::Integer, ρ::Real, σ::Real, μ::Real=0.0)
     #return p, state_values
 
     sigma_eta = σ /(1.0-ρ^2)
-    psi = sqrt(N-1)*sqrt(sigma_eta)
+    psi_val = sqrt(N-1)*sqrt(sigma_eta)
 
     w_est = zeros(N)
     w_est = 1.0/float(N)
@@ -30,8 +31,8 @@ function rouwenhorst(N::Integer, ρ::Real, σ::Real, μ::Real=0.0)
         w_est = *(transpose(p), w_est)
     end
  
-    # [-psi + 2.0*psi*float(i-1)/float(n-1) for i in 1:N]
-    return p , [-psi + (2.0*psi* ((i-1)/(N-1))) for i in 1:N], w_est
+    # [-psi_val + 2.0*psi_val*float(i-1)/float(n-1) for i in 1:N]
+    return p , [-psi_val + (2.0*psi_val* ((i-1)/(N-1))) for i in 1:N], w_est
 end
 
 function _rouwenhorst(p::Real, q::Real, m::Real, Δ::Real, n::Integer)
@@ -154,7 +155,7 @@ end
 # Constructs a growing grid on [left, right].
 ###############################################################################
 function grid_Cons_Grow(a, n, left, right, growth)
-    ccall((:grid_Cons_Grow, joinpath(pwd(), "fortran_wrappers","mod_julfort.so") ),
+    ccall((:grid_Cons_Grow, "./fortran_wrappers/mod_julfort.so"),
                 Cvoid,
                 (Ptr{Float64},Ref{Int64},Ref{Float64}, Ref{Float64}, Ref{Float64}),
                 a, n,  left, right,growth)
@@ -167,7 +168,7 @@ end
 ###############################################################################
 function linint_Grow(x, left, right, growth, n, il, ir, phi)
 
-    ccall((:linint_Grow, joinpath(pwd(), "fortran_wrappers","mod_julfort.so") ),
+    ccall((:linint_Grow, "./fortran_wrappers/mod_julfort.so"),
             Cvoid,
             (Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Float64}, Ref{Int64}, Ptr{Int64}, Ptr{Int64}, Ptr{Float64} ),
             x, left, right, growth, n, il, ir, phi)
@@ -192,6 +193,29 @@ function year(it, ij, ijp)
     return year
 end 
 
+# function which computes the year in which the household lives
+function year2(it, addit)
+
+
+    year2 = it + addit
+
+    if(year2 > TT)
+        year2 = TT
+    end 
+
+    if(year2 < 0)
+        year2 = 0
+    end 
+
+    if(it == 0)
+        year2 = 0
+    end
+    if(it == TT)
+        year2 = TT
+    end
+
+    return year2
+end 
 
 # the first order condition
 function foc(x_in)
@@ -212,7 +236,7 @@ function foc(x_in)
     wage = wn[it_com]*eff[ij_com]*theta[ip_com]*eta[is_com]
 
     # calculate available resources
-    available = (1.0+rn[it_com])*a[ia_com] + pen[ij_com, it_com] + v_ind
+    available = (1.0+rn[it_com])*a[ia_com] + beq[ij_com, it_com] + pen[ij_com, it_com] + v_ind
 
     # determine labor
     if(ij_com < JR)
@@ -225,7 +249,6 @@ function foc(x_in)
     global cons_com = max( (available + wage*lab_com - a_plus)/p[it_com] , 1e-10)
 
     # calculate linear interpolation for future part of first order condition
-    #call linint_Grow(a_plus, a_l, a_u, a_grow, NA, ial, iar, varphi)
     ial, iar, varphi = linint_Grow(a_plus, a_l, a_u, a_grow, NA, ial_v, iar_v, varphi_v)
 
     tomorrow = max(varphi*RHS[ij_com+1, ial, ip_com, is_com, itp] + (1.0-varphi)*RHS[ij_com+1, iar, ip_com, is_com, itp], 0.0)
@@ -237,9 +260,7 @@ end
 
 # calculates marginal utility of consumption
 function margu(cons, lab, it)
-
-    return nu*(cons^nu*(1.0-lab)^(1.0-nu))^(1.0-1.0/gamma)/(p[it]*cons)
-
+    return nu*(cons^nu*(1.0-lab)^(1.0-nu))^egam/(p[it]*cons)
 end 
 
 # calculates the value function
@@ -253,17 +274,16 @@ function valuefunc(a_plus, cons, lab, ij, ip, is, it)
     itp = year(it, ij, ij+1)
 
     # get tomorrows utility
-    #call linint_Grow(a_plus, a_l, a_u, a_grow, NA, ial, iar, varphi)
     ial, iar, varphi = linint_Grow(a_plus, a_l, a_u, a_grow, NA, ial_v, iar_v, varphi_v)
 
     # calculate tomorrow's part of the value function
     valuefunc = 0.0
     if(ij < JJ)
-        valuefunc = max(varphi*EV[ij+1, ial, ip, is, itp] + (1.0-varphi)*EV[ij+1, iar, ip, is, itp], 1e-10)^(1.0-1.0/gamma)/(1.0-1.0/gamma)
+        valuefunc = max(varphi*EV[ij+1, ial, ip, is, itp] + (1.0-varphi)*EV[ij+1, iar, ip, is, itp], 1e-10)^egam/egam
     end
 
     # add todays part and discount
-    return (c_help^nu*(1.0-l_help)^(1.0-nu))^(1.0-1.0/gamma)/(1.0-1.0/gamma) + beta*valuefunc
+    return (c_help^nu*(1.0-l_help)^(1.0-nu))^egam/egam + beta*psi[ij+1, itp]*valuefunc
 
 end 
 
@@ -310,8 +330,8 @@ end
 # subroutine for calculating prices
 function prices(it)
 
-    r[it] = Omega*alpha*(KK[it]/LL[it])^(alpha-1.0)-delta
-    w[it] = Omega*(1.0-alpha)*(KK[it]/LL[it])^alpha
+    r[it] = Omega2*alpha*(KK[it]/LL[it])^(alpha-1.0)-delta
+    w[it] = Omega2*(1.0-alpha)*(KK[it]/LL[it])^alpha
     rn[it] = r[it]*(1.0-taur[it])
     wn[it] = w[it]*(1.0-tauw[it]-taup[it])
     p[it] = 1.0 + tauc[it]
@@ -326,9 +346,14 @@ function solve_household(ij_in, it_in)
     global lab_com
     # get decision in the last period of life
     it = year(it_in, ij_in, JJ)
+
+    #bequest for the olds
+    beq[JJ, it] = damp*GAM[JJ, it]*BQ[it] + (1.0-damp)*beq[JJ, it]
+
     for ia in 0:NA
         aplus[JJ, ia, :, :, it] .= 0.0
-        c[JJ, ia, :, :, it] .= ((1.0+rn[it] )*a[ia] + pen[JJ, it] .+ v[JJ, ia, :, :, it])/p[it]
+        #c[JJ, ia, :, :, it] .= ((1.0+rn[it] )*a[ia] + pen[JJ, it] .+ v[JJ, ia, :, :, it])/p[it]
+        c[JJ, ia, :, :, it] .= ((1.0+rn[it])*a[ia]+ beq[JJ, it] .+ pen[JJ, it] .+ v[JJ, ia, :, :, it])/p[it]
         l[JJ, ia, :, :, it] .= 0.0
         VV[JJ, ia, :, :, it] .= valuefunc(0.0, c[JJ, ia, 1, 1, it],l[JJ, ia, 1, 1, it], JJ, 1, 1, it)
     end
@@ -339,6 +364,9 @@ function solve_household(ij_in, it_in)
     for ij in JJ-1:-1:ij_in
 
         it = year(it_in, ij_in, ij)
+
+        #bequest for the olds
+        beq[ij, it] = damp*GAM[ij, it]*BQ[it] + (1.0-damp)*beq[ij, it]
 
         # check about how many is to iterate
         if(ij >= JR)
@@ -384,7 +412,8 @@ function solve_household(ij_in, it_in)
                         x_root = 0.0
                         wage = wn[it]*eff[ij]*theta[ip]*eta[is]
                         v_ind = v[ij, ia, ip, is, it]
-                        available = (1.0+rn[it])*a[ia] + pen[ij, it] + v_ind
+                        #available = (1.0+rn[it])*a[ia] + pen[ij, it] + v_ind
+                        available = (1.0+rn[it])*a[ia] + beq[ij, it] + pen[ij, it] + v_ind
                         if(ij < JR)
                             global lab_com = min( max(nu-(1.0-nu)*available/wage , 0.0) , 1.0-1e-10)
                         else
@@ -433,8 +462,9 @@ function interpolate(ij, it)
                     RHS[ij, ia, ip, is, it] = RHS[ij, ia, ip, is, it] + pi[is, is_p]*margu(chelp, lhelp, it)
                     EV[ij, ia, ip, is, it]  = EV[ij, ia, ip, is, it] + pi[is, is_p]*VV[ij, ia, ip, is_p, it]
                 end
-                RHS[ij, ia, ip, is, it] = ((1.0+rn[it])*beta*RHS[ij, ia, ip, is, it])^(-gamma)
-                EV[ij, ia, ip, is, it] = ((1.0-1.0/gamma)*EV[ij, ia, ip, is, it])^(1.0/(1.0-1.0/gamma))
+                RHS[ij, ia, ip, is, it] = max((1.0+rn[it])*beta*psi[ij,it]*RHS[ij, ia, ip, is, it], 1e-10)^(-gamma)
+                #EV[ij, ia, ip, is, it] = ((1.0-1.0/gamma)*EV[ij, ia, ip, is, it])^(1.0/(1.0-1.0/gamma))
+                EV[ij, ia, ip, is, it] = (egam*EV[ij, ia, ip, is, it])^(1.0/egam)
             end
         end
     end
@@ -467,9 +497,12 @@ function get_distribution(it)
                     ial, iar, varphi = linint_Grow(aplus[ij-1, ia, ip, is, itm], a_l, a_u, a_grow, NA, ial_v, iar_v, varphi_v)
 
                     # restrict values to grid just in case
-                    ial = max(min(ial, NA-1), 0)
-                    iar = max(min(iar, NA), 1)
-                    varphi = max(min(varphi, 1.0), 0.0)
+                    #ial = max(min(ial, NA-1), 0)
+                    #iar = max(min(iar, NA), 1)
+                    #varphi = max(min(varphi, 1.0), 0.0)
+                    ial = min(ial, NA)
+                    iar = min(iar, NA)
+                    varphi = min(varphi, 1.0)
 
                     # redistribute households
                     for is_p in 1:NS
@@ -501,11 +534,13 @@ function aggregation(it)
     VV_coh[:, it] .= 0.0
     m_coh[:]      .= 0.0
     FLC[:,it]     .= 0.0
+    beq_coh[:,it] .= 0.0
 
     for ij in 1:JJ
         for ia in 0:NA
             for ip in 1:NP
                 for is in 1:NS
+
                     c_coh[ij, it] = c_coh[ij, it] + c[ij, ia, ip, is, it]*phi[ij, ia, ip, is, it]
                     l_coh[ij, it] = l_coh[ij, it] + l[ij, ia, ip, is, it]*phi[ij, ia, ip, is, it]
                     y_coh[ij, it] = y_coh[ij, it] + eff[ij]*theta[ip]*eta[is]*l[ij, ia, ip, is, it]*phi[ij, ia, ip, is, it]
@@ -519,8 +554,10 @@ function aggregation(it)
                     if(aplus[ij, ia, ip, is, it] < 1e-4)
                         FLC[ij, it] = FLC[ij, it] + phi[ij, ia, ip, is, it]
                     end 
+ 
                     VV_coh[ij, it] = VV_coh[ij, it] + VV[ij, ia, ip, is, it]*phi[ij, ia, ip, is, it]
                     m_coh[ij]      = m_coh[ij] + phi[ij, ia, ip, is, it]
+                    beq_coh[ij, it] = beq_coh[ij, it] + a[ia]*(1.0 + rn[it])* (1.0 - psi[ij, it])*phi[ij, ia, ip, is, it]/psi[ij, it] 
                 end
             end
         end
@@ -536,11 +573,16 @@ function aggregation(it)
     HH[it] = 0.0
     AA[it] = 0.0
     workpop = 0.0
+    BQ[it] = 0.0
     for ij in 1:JJ
         CC[it] = CC[it] + c_coh[ij, it]*m[ij, it]
         LL[it] = LL[it] + y_coh[ij, it]*m[ij, it]
         HH[it] = HH[it] + l_coh[ij, it]*m[ij, it]
-        AA[it] = AA[it] + a_coh[ij, it]*m[ij, it]
+        #AA[it] = AA[it] + a_coh[ij, it]*m[ij, it]
+        AA[it] = AA[it] + a_coh[ij, it]*m[ij, it]/psi[ij, it]
+
+        BQ[it] = BQ[it] + beq_coh[ij, it]*m[ij, it]   
+
         if(ij < JR)
             workpop = workpop + m[ij, it]
         end
@@ -550,11 +592,12 @@ function aggregation(it)
     KK[it] = damp*(AA[it]-BB[it]-BA[it])+(1.0-damp)*KK[it]
     LL[it] = damp*LL[it] + (1.0-damp)*LL_old
     II[it] = (1.0+n_p)*KK[itp] - (1.0-delta)*KK[it]
-    YY[it] = Omega * KK[it]^alpha * LL[it]^(1.0-alpha)
+    YY[it] = Omega2 * KK[it]^alpha * LL[it]^(1.0-alpha)
 
     # get average income and average working hours
     INC[it] = w[it]*LL[it]/workpop
-    HH[it]  = HH[it]/workpop
+    HH[it]  = HH[it]/workpop    # damping and other quantities
+
 
     # get difference on goods market
     DIFF[it] = YY[it]-CC[it]-II[it]-GG[it]
@@ -675,31 +718,32 @@ function get_transition()
         # check for convergence and write screen output
         if(!lsra_on)
 
-            check = iter > 1 && itcheck == TT-1 && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
+            check = iter > 1 && itcheck == TT && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
             println(iter,"     ",round(digits = 2, HH[TT]),"   ", round(digits = 2, 5.0*KK[TT]/YY[TT]*100.0), "   ", round(digits = 2, CC[TT]/YY[TT]*100.0), "   ", round(digits = 2, II[TT]/YY[TT]*100.0), "   ", round(digits = 2, ((1.0+r[TT])^0.2-1.0)*100.0), "   ", round(digits = 2, w[TT]), "   ", round(digits = 5, DIFF[itmax]/YY[itmax]*100.0))
 
         else
-            check = iter > 1 && itcheck == TT-1 && lsra_comp/lsra_all > 0.99999 && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
+            check = iter > 1 && itcheck == TT && lsra_comp/lsra_all > 0.99999 && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
             println(iter,"     ",round(digits = 5, lsra_comp/lsra_all*100.0), "    ", round(digits = 5, (Lstar^(1.0/(1.0-1.0/gamma))-1.0)*100.0), "     ", round(digits = 5, DIFF[itmax]/YY[itmax]*100.0))
         end
 
         # check for convergence
         if(check)
-            #for it in 1:TT
-            #    if(!lsra_on)
-            #        #call output(it)
-            #    end
-            #end
+            for it in 1:TT
+                if(!lsra_on)
+                    output(it)
+                end
+            end
             #call output_summary()
             break
         end
     end
 
     #call toc
-    #for it in 1:TT
-    #    if(!lsra_on)
-    #        #call output(it)
-    #end
+    for it in 1:TT
+        if(!lsra_on)
+            output(it)
+        end
+    end
     #call output_summary()
 
 
@@ -709,37 +753,18 @@ end
 # initializes transitional variables
 function initialize_trn()
 
+
     println("TRANSITION PATH")
+
     println("ITER       H     K/Y     C/Y     I/Y       r       w        DIFF")
 
-    # set up population structure
-    for it in 1:TT
-        pop[1, it] = (1.0+n_p)*pop[1, it-1]
-        for ij in 2:JJ
-            pop[ij, it] = pop[ij-1, it-1]
-        end
-    end
-
-    for it in 1:TT
-        for ij in 1:JJ
-            m[ij, it] = pop[ij, it]/pop[1, it]
-        end
-    end
 
     for it in 1:TT
 
         taup[it] = taup[0]
-        if(tax[it] == 1)
-            tauc[it] = tauc[0]
-        elseif(tax[it] == 2)
-            tauw[it] = tauw[0]
-            taur[it] = taur[0]
-        elseif(tax[it] == 3)
-            tauw[it] = tauw[0]
-        else
-            taur[it] = taur[0]
-        end
-
+        tauc[it] = tauc[0]
+        tauw[it] = tauw[0]
+        taur[it] = taur[0]
         r[it] = r[0]
         rn[it] = r[it]*(1.0-taur[it])
         w[it] = w[0]
@@ -757,17 +782,21 @@ function initialize_trn()
         INC[it] = INC[0]
         pen[:,it] = pen[:, 0]
         PP[it] = PP[0]
-        taxrev(:,it) = taxrev[:, 0]
-        c_coh(:, it) = c_coh[:, 0]
-        l_coh(:, it) = l_coh[:, 0]
-        y_coh(:, it) = y_coh[:, 0]
-        a_coh(:, it) = a_coh[:, 0]
+        taxrev[:,it] = taxrev[:, 0]
+        c_coh[:, it] = c_coh[:, 0]
+        l_coh[:, it] = l_coh[:, 0]
+        y_coh[:, it] = y_coh[:, 0]
+        a_coh[:, it] = a_coh[:, 0]
         aplus[:, :, :, :, it] = aplus[:, :, :, :, 0]
         c[:, :, :, :, it] = c[:, :, :, :, 0]
         l[:, :, :, :, it] = l[:, :, :, :, 0]
         phi[:, :, :, :, it] = phi[:, :, :, :, 0]
         VV[:, :, :, :, it] = VV[:, :, :, :, 0]
         RHS[:, :, :, :, it] = RHS[:, :, :, :, 0]
+
+        beq[:,it] = beq[:,0]
+        BQ[it] = BQ[0]
+        
     end
 
 end 
@@ -912,6 +941,36 @@ function LSRA()
 end 
 
 
+# subroutine for writing output
+function output(it)
+
+    iamax = zeros(JJ)
+    # check for the maximium grid point used
+    check_grid(iamax, it)
+
+end 
+
+# subroutine that checks for the maximum gridpoint used
+function check_grid(iamax, it)
+
+    iamax .= 0
+    
+    for ij in 1:JJ
+        # check for the maximum asset grid point used at a certain age
+        for ia in 0:NA
+            for ip in 1:NP
+                for is in 1:NS
+                    if(phi[ij, ia, ip, is, it] > 1e-8)
+                        iamax[ij] = ia
+                    end
+                end
+            end
+        end
+    end
+
+end 
+
+
 ### Build parameters
 function build_parameters(country, data_file_name)
     df_param = DataFrame(CSV.File(joinpath(pwd(), "datos",data_file_name)))
@@ -952,10 +1011,9 @@ function build_parameters(country, data_file_name)
     =#
 
     nu = (df_pais.avh[1]/(110*50))
-
     
     params_names = ["alpha", "Omega", "delta", "nu", "np", "gy" , "tauc", "tauw_min", "tauw_max", "tauw_mean", "kappa"]
     params_values = [alpha, Omega, delta, nu, df_pais.fertility_rate[1], df_pais.csh_g[1], df_pais.vat_tax[1], df_pais.tax_w_ocde_min[1], df_pais.tax_w_ocde_max[1],df_pais.tax_w_ocde_medio[1], df_pais.kappa[1]]
-
+    
     return Dict(zip(params_names, params_values))
 end 

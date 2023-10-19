@@ -1,21 +1,22 @@
-###############################################################################
-# PROGRAM SOLG_TR
-#
-# ## The stochastic OLG model with transitional dynamics
-#
-# This code is published under the GNU General Public License v3
-#                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
-#
-# Authors: Hans Fehr and Fabian Kindermann
-#          contact@ce-fortran.com
-#
-###############################################################################
-include("utils.jl")
+#=##############################################################################
+! PROGRAM SOLG_TR_SRV
+!
+! ## OLG model with survival probabilities
+!
+! This code is published under the GNU General Public License v3
+!                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
+!
+! Authors: Hans Fehr, Maurice Hofmann and Fabian Kindermann
+!          contact@ce-fortran.com
+!
+=##############################################################################
+
+include("utils_sur_prob.jl")
 using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "MEX"
+pais = "CRI"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -27,11 +28,13 @@ elseif pais == "CRI"
     OLG_params["by"] = 0.478
 end
 
+#OLG_params["kappa"] = 0.3
+
 # number of transition periods
 global TT = 40
 
 # number of years the household lives
-global JJ = 12
+global JJ = 16
 
 # number of years the household retires
 global JR = 10
@@ -59,11 +62,11 @@ global rho         = 0.98
 # production parameters
 global alpha = OLG_params["alpha"]
 global delta = 1.0-(1.0-OLG_params["delta"])^5
-global Omega = OLG_params["Omega"]
+global Omega2 = OLG_params["Omega"]
 
 # size of the asset grid
 global a_l    = 0.0
-global a_u    = 35.0
+global a_u    = 50.0
 global a_grow = 0.05
 
 # demographic parameters
@@ -72,7 +75,7 @@ global n_p   = (1.0+OLG_params["np"])^5-1.0
 # simulation parameters
 global damp    = 0.30
 global sig     = 1e-4
-global itermax = 50
+global itermax = 70
 
 # counter variables
 #integer :: iter
@@ -89,7 +92,7 @@ for param = [:KK, :AA, :BB, :LL, :HH]
 end
 
 # good market
-for param = [:YY, :CC, :II, :GG, :INC]
+for param = [:YY, :CC, :II, :GG, :INC, :BQ]
     @eval global $param = OffsetArray(zeros(TT+1), 0:TT)
 end
 
@@ -114,11 +117,20 @@ global lsra_comp
 global lsra_all
 global Lstar
 global lsra_on
+global Vstar
 
 # cohort aggregate variables
 for param = [:c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh]
     @eval global $param = OffsetArray(zeros(JJ, TT+1), 1:JJ, 0:TT) ;
 end
+
+for param = [:GAM, :beq, :beq_coh]
+    @eval global $param = OffsetArray(zeros(JJ, TT+1), 1:JJ, 0:TT) ;
+end
+
+global omega = zeros(JJ)
+
+global psi = OffsetArray(zeros(JJ+1, TT+1),1:JJ+1, 0:TT)
 
 # the shock process
 global dist_theta = zeros(NP)
@@ -156,14 +168,46 @@ end
 global DIFF = OffsetArray(zeros(TT+1),0:TT)
 
 
-# Calculate initial equilibrium
-# set up population structure
-for ij in 1:JJ
-    pop[ij, 0] = 1.0/(1.0+n_p)^(ij-1)
-end
+##### initializes the remaining model parameters and variables
 
-for ij in 1:JJ
-    m[ij, 0] = pop[ij, 0]/pop[1, 0]
+# survival probabilities
+psi[1:6,0:TT] .= 1.00000000
+psi[7,0:TT] .= 0.98972953
+psi[8,0:TT] .= 0.98185396
+psi[9,0:TT] .= 0.97070373
+psi[10,0:TT] .= 0.95530594
+psi[11,0:TT] .= 0.93417914
+psi[12,0:TT] .= 0.90238714
+psi[13,0:TT] .= 0.83653436
+psi[14,0:TT] .= 0.71048182
+psi[15,0:TT] .= 0.52669353
+psi[16,0:TT] .= 0.31179803
+psi[17,0:TT] .= 0.00000000
+
+# set bequest distribution
+omega[1] = 1.0/6.0
+omega[2] = 1.0/6.0
+omega[3] = 1.0/6.0
+omega[4] = 1.0/6.0
+omega[5] = 1.0/6.0
+omega[6] = 1.0/6.0
+#        omega(7) = 1d0/9d0
+#        omega(8) = 1d0/9d0
+#        omega(9) = 1d0/9d0
+omega[7:16] .= 0.0
+
+# set up population structure
+for it in 0:TT
+    m[1,it] = 1.0
+    GAM[1,it] = omega[1]
+    itm = year2(it, -1)
+    for ij in 2:JJ
+        m[ij,it] = m[ij-1, itm]*psi[ij, it]/(1.0+n_p)
+        GAM[1,it] = GAM[1, it] + omega[ij]*m[ij, it]
+    end
+    for ij in JJ:-1:1
+        GAM[ij, it] = omega[ij]/GAM[1, it]
+    end
 end
 
 # initialize asset grid
@@ -210,6 +254,9 @@ taup  .= 0.1
 kappa .= OLG_params["kappa"]
 gy    = OLG_params["gy"]
 by    = OLG_params["by"]/5.0
+
+beq[:,0] .= 0.0
+BQ[0] = 0.0
 
 # initial guesses for macro variables
 KK .= 1.0
@@ -275,22 +322,21 @@ pension_system = DataFrame(
     PEN = [pen[JR, 0], kappa[0]],
     PP = [PP[0], PP[0]/YY[0]*100]
 );
-
 capital_market
 labour_market
 good_market
 gov_accounts
 pension_system
 
+
 for param = ["capital_market", "labour_market", "good_market", "gov_accounts", "pension_system"]
-    file_name = "DSOLG_"*param*"_"*pais*".csv" 
+    file_name = "DSOLG_probs_"*param*"_"*pais*".csv" 
     full_save_path = joinpath(pwd(), "output","csvs", pais, file_name)
 
     df_to_save = Symbol(param)
 
     CSV.write(full_save_path, @eval $df_to_save)
 end
-
 
 df_OLG_params = DataFrame(OLG_params)
 
@@ -302,7 +348,8 @@ df_OLG_params.gamma .= gamma
 ### Lo representamos como %PIB 
 df_OLG_params.deuda_necesaria .= ((r[0] - n_p)*BB[0]/YY[0])*100
 
-file_name = "DSOLG_OLG_params_"*pais*".csv"
+
+file_name = "DSOLG_probs_OLG_params_"*pais*".csv"
 full_save_path = joinpath(pwd(), "output","csvs", pais, file_name)
 
 CSV.write(full_save_path, df_OLG_params)
@@ -310,18 +357,18 @@ CSV.write(full_save_path, df_OLG_params)
 #=
 # set reform parameter (adjsust accordingly for Figure 11.7)
 #kappa[1:TT] .= 0.0
-kappa[1:TT] .= 0.33
+kappa[1:TT] .= 0.5;
 
 
 # calculate transition path without lsra
-lsra_on = false
+lsra_on = false;
 
 get_transition()
 
 
 
 # calculate transition path with lsra
-lsra_on = true
+lsra_on = true;
 get_transition()
 
 
