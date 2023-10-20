@@ -1,6 +1,8 @@
 using CSV 
 using DataFrames 
 using Query
+using OffsetArrays
+using Roots
 
 #=#############################################################################
 # SUBROUTINE discretize_AR
@@ -57,7 +59,7 @@ end
 #
 # Calculates value of function that should be integrated for pis.
 ###########################################################################
-function get_tomorrow(pi)
+function get_tomorrow(pi_model)
 
     ###### INPUT/OUTPUT VARIABLES #########################################
 
@@ -81,15 +83,15 @@ function get_tomorrow(pi)
 
     random_generated = rand()
     # get tomorrows value
-    for i1 in 1:size(pi, 1)-1
+    for i1 in 1:size(pi_model, 1)-1
 
-        if(random_generated <= sum(pi[1:i1]))
+        if(random_generated <= sum(pi_model[1:i1]))
             return i1
         end
     end
 
     # else choose last value
-    return size(pi, 1)-1
+    return size(pi_model, 1)-1
 
 end 
 
@@ -99,7 +101,7 @@ end
 #
 # Simulates a discrete AR(1) process.
 ###############################################################################
-function simulate_AR(pi, shocks)
+function simulate_AR(pi_model, shocks)
 
         
     ###### INPUT/OUTPUT VARIABLES #############################################
@@ -122,8 +124,8 @@ function simulate_AR(pi, shocks)
     ###### ROUTINE CODE #######################################################
     
     # assert size equality and get number of simulated schocks
-    #n = assert_eq(size(pi,1), size(pi,2), 'tauchen')
-    n = size(pi,1)
+    #n = assert_eq(size(pi,1), size(pi_model,2), 'tauchen')
+    n = size(pi_model,1)
     T = size(shocks,1)
     
     #= initialize the random seed
@@ -142,7 +144,7 @@ function simulate_AR(pi, shocks)
     
     # now calculate other shocks
     for j in 2:T
-        shocks[j] = get_tomorrow( pi[round(Int,shocks[j-1]) , :] )
+        shocks[j] = get_tomorrow( pi_model[round(Int,shocks[j-1]) , :] )
     end
 
 
@@ -298,7 +300,6 @@ function get_SteadyState()
 
     # iterate until value function converges
     for iter in 1:itermax
-
         # derive prices
         prices(0)
 
@@ -360,7 +361,7 @@ function solve_household(ij_in, it_in)
 
     # interpolate individual RHS
     interpolate(JJ, it)
-
+    
     for ij in JJ-1:-1:ij_in
 
         it = year(it_in, ij_in, ij)
@@ -449,6 +450,8 @@ end
 
 # for calculating the rhs of the first order condition at age ij
 function interpolate(ij, it)
+
+
     for ia in 0:NA
         for ip in 1:NP
             for is in 1:NS
@@ -459,9 +462,10 @@ function interpolate(ij, it)
                 for is_p in 1:NS
                     chelp = max(c[ij, ia, ip, is_p, it],1e-10)
                     lhelp = max(l[ij, ia, ip, is_p, it],1e-10)
-                    RHS[ij, ia, ip, is, it] = RHS[ij, ia, ip, is, it] + pi[is, is_p]*margu(chelp, lhelp, it)
-                    EV[ij, ia, ip, is, it]  = EV[ij, ia, ip, is, it] + pi[is, is_p]*VV[ij, ia, ip, is_p, it]
+                    RHS[ij, ia, ip, is, it] = RHS[ij, ia, ip, is, it] + pi_model[is, is_p]*margu(chelp, lhelp, it)
+                    EV[ij, ia, ip, is, it]  = EV[ij, ia, ip, is, it] + pi_model[is, is_p]*VV[ij, ia, ip, is_p, it]
                 end
+
                 RHS[ij, ia, ip, is, it] = max((1.0+rn[it])*beta*psi[ij,it]*RHS[ij, ia, ip, is, it], 1e-10)^(-gamma)
                 #EV[ij, ia, ip, is, it] = ((1.0-1.0/gamma)*EV[ij, ia, ip, is, it])^(1.0/(1.0-1.0/gamma))
                 EV[ij, ia, ip, is, it] = (egam*EV[ij, ia, ip, is, it])^(1.0/egam)
@@ -506,8 +510,8 @@ function get_distribution(it)
 
                     # redistribute households
                     for is_p in 1:NS
-                        phi[ij, ial, ip, is_p, it] = phi[ij, ial, ip, is_p, it] + pi[is, is_p]*varphi*phi[ij-1, ia, ip, is, itm]
-                        phi[ij, iar, ip, is_p, it] = phi[ij, iar, ip, is_p, it] + pi[is,is_p]*(1.0-varphi)*phi[ij-1,ia,ip,is,itm]
+                        phi[ij, ial, ip, is_p, it] = phi[ij, ial, ip, is_p, it] + pi_model[is, is_p]*varphi*phi[ij-1, ia, ip, is, itm]
+                        phi[ij, iar, ip, is_p, it] = phi[ij, iar, ip, is_p, it] + pi_model[is,is_p]*(1.0-varphi)*phi[ij-1,ia,ip,is,itm]
                     end
                 end
             end
@@ -719,7 +723,7 @@ function get_transition()
         if(!lsra_on)
 
             check = iter > 1 && itcheck == TT && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
-            println(iter,"     ",round(digits = 5, HH[TT]),"   ", round(digits = 5, 5.0*KK[TT]/YY[TT]*100.0), "   ", round(digits = 5, CC[TT]/YY[TT]*100.0), "   ", round(digits = 5, II[TT]/YY[TT]*100.0), "   ", round(digits = 5, ((1.0+r[TT])^0.2-1.0)*100.0), "   ", round(digits = 5, w[TT]), "   ", round(digits = 8, DIFF[itmax]/YY[itmax]*100.0))
+            println(iter,"     ",round(digits = 2, HH[TT]),"   ", round(digits = 2, 5.0*KK[TT]/YY[TT]*100.0), "   ", round(digits = 2, CC[TT]/YY[TT]*100.0), "   ", round(digits = 2, II[TT]/YY[TT]*100.0), "   ", round(digits = 2, ((1.0+r[TT])^0.2-1.0)*100.0), "   ", round(digits = 2, w[TT]), "   ", round(digits = 5, DIFF[itmax]/YY[itmax]*100.0))
 
         else
             check = iter > 1 && itcheck == TT && lsra_comp/lsra_all > 0.99999 && abs(DIFF[itmax]/YY[itmax])*100.0 < sig*100.0
@@ -1017,3 +1021,279 @@ function build_parameters(country, data_file_name)
     
     return Dict(zip(params_names, params_values))
 end 
+
+function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_p, kappa_p, policy_p, iteracion)
+    try
+        # number of transition periods
+        global TT = 40
+
+        # number of years the household lives
+        global JJ = 16
+
+        # number of years the household retires
+        global JR = 10
+
+        # number of persistent shock process values
+        global NP = 2
+
+        # number of transitory shock process values
+        global NS = 5
+
+        # number of points on the asset grid
+        global NA = 100
+
+        # household preference parameters
+        global gamma = gamma_p
+        global egam = 1.0 - 1.0/gamma
+        global nu    = nu_p
+        global beta  = 0.998^5
+
+        # household risk process
+        global sigma_theta = 0.23
+        global sigma_eps   = 0.05
+        global rho         = 0.98
+
+        # production parameters
+        global alpha = alpha_p
+        global delta = 1.0-(1.0-delta_p)^5
+        global Omega2 = Omega_p
+
+        # size of the asset grid
+        global a_l    = 0.0
+        global a_u    = 50.0
+        global a_grow = 0.05
+
+        # demographic parameters
+        global n_p   = (1.0+np_p)^5-1.0
+
+        # simulation parameters
+        global damp    = 0.30
+        global sig     = 1e-8
+        global itermax = 120
+
+        # counter variables
+        #integer :: iter
+
+        # macroeconomic variables
+        # prices 
+        for param = [:r, :rn, :w, :wn, :p]
+            @eval global $param = OffsetArray(zeros(TT+1), 0:TT);
+        end
+
+        # capital market
+        for param = [:KK, :AA, :BB, :LL, :HH]
+            @eval global $param = OffsetArray(zeros(TT+1), 0:TT)
+        end
+
+        # good market
+        for param = [:YY, :CC, :II, :GG, :INC, :BQ]
+            @eval global $param = OffsetArray(zeros(TT+1), 0:TT)
+        end
+
+        # government variables
+        for param = [:tauc, :tauw, :taur, :taup, :kappa, :PP]
+            @eval global $param = OffsetArray(zeros(TT+1), 0:TT)
+        end
+
+        global gy 
+        global by 
+
+        global pen = OffsetArray(zeros(JJ,TT+1), 1:JJ,0:TT)
+
+        global taxrev = OffsetArray(zeros(4,TT+1), 1:4,0:TT)
+        global tax = OffsetArray(Int.(zeros(TT+1)), 0:TT)
+
+        # LSRA variables
+        global BA = OffsetArray(zeros(TT+1), 0:TT)
+        global SV = OffsetArray(zeros(TT+1), 0:TT) 
+
+        global lsra_comp
+        global lsra_all
+        global Lstar
+        global lsra_on
+        global Vstar
+
+        # cohort aggregate variables
+        for param = [:c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh]
+            @eval global $param = OffsetArray(zeros(JJ, TT+1), 1:JJ, 0:TT) ;
+        end
+
+        for param = [:GAM, :beq, :beq_coh]
+            @eval global $param = OffsetArray(zeros(JJ, TT+1), 1:JJ, 0:TT) ;
+        end
+
+        global omega = zeros(JJ)
+
+        global psi = OffsetArray(zeros(JJ+1, TT+1),1:JJ+1, 0:TT)
+
+        # the shock process
+        global dist_theta = zeros(NP)
+        global theta = zeros(NP)
+        #pi(NS, NS), eta(NS)
+        global is_initial = 3
+
+        # demographic and other model parameters
+        global eff = zeros(JJ)
+
+        for param = [:m, :pop]
+            @eval global $param = OffsetArray(zeros(JJ, TT+1), 1:JJ, 0:TT) ;
+        end
+
+        # individual variables
+
+        global a = OffsetArray(zeros(NA+1),0:NA)
+
+        global aplus = OffsetArray(zeros(JJ, NA+1, NP, NS, TT+1), 1:JJ, 0:NA, 1:NP, 1:NS, 0:TT)
+
+        for param = [:c, :l, :phi, :VV, :v]
+            @eval global $param = OffsetArray(zeros(JJ, NA+1, NP, NS, TT+1), 1:JJ, 0:NA, 1:NP, 1:NS, 0:TT)
+        end 
+
+        global FLC = OffsetArray(zeros(JJ,TT+1), 1:JJ,0:TT)
+
+        # numerical variables
+        global RHS = OffsetArray(zeros(JJ, NA+1, NP, NS, TT+1), 1:JJ, 0:NA, 1:NP, 1:NS, 0:TT) 
+        global EV = OffsetArray(zeros(JJ, NA+1, NP, NS, TT+1), 1:JJ, 0:NA, 1:NP, 1:NS, 0:TT) 
+
+        for param = [:ij_com, :ia_com, :ip_com, :is_com, :it_com, :cons_com, :lab_com]
+            @eval global $param
+        end
+
+        global DIFF = OffsetArray(zeros(TT+1),0:TT)
+
+
+        ##### initializes the remaining model parameters and variables
+
+        # survival probabilities
+        psi[1:6,0:TT] .= 1.00000000
+        psi[7,0:TT] .= 0.98972953
+        psi[8,0:TT] .= 0.98185396
+        psi[9,0:TT] .= 0.97070373
+        psi[10,0:TT] .= 0.95530594
+        psi[11,0:TT] .= 0.93417914
+        psi[12,0:TT] .= 0.90238714
+        psi[13,0:TT] .= 0.83653436
+        psi[14,0:TT] .= 0.71048182
+        psi[15,0:TT] .= 0.52669353
+        psi[16,0:TT] .= 0.31179803
+        psi[17,0:TT] .= 0.00000000
+
+        # set bequest distribution
+        omega[1] = 1.0/6.0
+        omega[2] = 1.0/6.0
+        omega[3] = 1.0/6.0
+        omega[4] = 1.0/6.0
+        omega[5] = 1.0/6.0
+        omega[6] = 1.0/6.0
+        #        omega(7) = 1d0/9d0
+        #        omega(8) = 1d0/9d0
+        #        omega(9) = 1d0/9d0
+        omega[7:16] .= 0.0
+
+        # set up population structure
+        for it in 0:TT
+            m[1,it] = 1.0
+            GAM[1,it] = omega[1]
+            itm = year2(it, -1)
+            for ij in 2:JJ
+                m[ij,it] = m[ij-1, itm]*psi[ij, it]/(1.0+n_p)
+                GAM[1,it] = GAM[1, it] + omega[ij]*m[ij, it]
+            end
+            for ij in JJ:-1:1
+                GAM[ij, it] = omega[ij]/GAM[1, it]
+            end
+        end
+
+        # initialize asset grid
+        grid_Cons_Grow(a, NA+1, a_l, a_u, a_grow)
+
+
+        # get initial guess for savings decision
+        for ij in 1:JJ
+            for ip in 1:NP
+                for is in 1:NS
+                    aplus[ij, :, ip, is, 0] .= max.(a/2, a[1]/2) 
+                end
+            end
+        end
+
+        # initialize age earnings process
+        eff[1] = 1.0000
+        eff[2] = 1.3527
+        eff[3] = 1.6952
+        eff[4] = 1.8279
+        eff[5] = 1.9606
+        eff[6] = 1.9692
+        eff[7] = 1.9692
+        eff[8] = 1.9392
+        eff[9] = 1.9007
+        eff[JR:JJ] .= 0.0
+
+        # initialize fixed effect
+        dist_theta .= 1.0/float(NP)
+        theta[1]   = -sqrt(sigma_theta)
+        theta[2]   = sqrt(sigma_theta)
+        theta .= exp.(theta)
+
+        # calculate the shock process
+        global pi_model
+        global eta
+
+        pi_model, eta = rouwenhorst(NS, rho, sigma_eps, 0.0);
+        eta = exp.(eta)
+
+        # tax and transfers
+        tax   .= 3
+        tauc  .= tauc_p
+        tauw  .= 0.0
+        taur  .= 0.0
+        taup  .= 0.1
+        kappa .= kappa_p
+        gy    = gy_p
+        by    = by_p/5.0
+
+        beq[:,0] .= 0.0
+        BQ[0] = 0.0
+
+        # initial guesses for macro variables
+        KK .= 1.0
+        LL .= 1.0
+        YY .= 1.0
+        II .= (n_p+delta)*KK
+
+        GG .= gy*YY[0]
+        BB .= by*YY[0]
+
+        pen .= 0.0
+        pen[JR:JJ, 0] .= kappa[0]
+
+
+        global ial_v = Array{Int64}(undef, 1)
+        global iar_v = Array{Int64}(undef, 1)
+        global varphi_v = zeros(1)
+
+
+
+        # calculate initial equilibrium
+        get_SteadyState()
+
+        # set reform parameter (adjsust accordingly for Figure 11.7)
+        kappa[1:TT] .= 0.96*kappa[0];
+        global sig     = 1e-4
+
+        # calculate transition path without lsra
+        lsra_on = false;
+
+        get_transition()
+
+        # calculate transition path with lsra
+        lsra_on = true;
+        get_transition()
+
+
+
+    catch e
+        println("ERROR")
+    end
+
+end

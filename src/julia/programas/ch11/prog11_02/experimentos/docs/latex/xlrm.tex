@@ -1,0 +1,66 @@
+\documentclass[preview]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+%% Para incluir item en las celdas de la tabla
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage{natbib}
+\usepackage{hyperref}
+%% Para incluir longtables
+\usepackage{longtable}
+
+
+\begin{document}
+\sffamily
+
+
+
+\begin{longtable}{p{5cm} p{6cm}}  
+%\caption{Agentes del modelo}\label{tab:agentes}\\    %%%%<===
+\\[-1.8ex]\hline 
+\endhead
+\hline \\[-1.8ex] 
+ \textbf{Uncertainties (X)} & \multicolumn{1}{c} {\textbf{Policy Levers (L)}}   \\ 
+\hline \\[-1ex] 
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+\par\tabitem Nivel de tecnología, $Y_t = \Omega K_t^\alpha L_t^{(1-\alpha)}$.
+\par\tabitem Coeficiente de aversión relativa al riesgo, $\gamma$.
+\par\tabitem Elasticidad de capital, $\alpha$.
+\par\tabitem Tasa de depreciación, $\delta$.
+\par\tabitem Tasa de crecimiento poblacional, $n_p$.
+\par\tabitem Preferencia del hogar entre consumo y ocio, $\nu$.
+\par\tabitem Probabilidades de supevivencia.
+\par\tabitem Age earnings process.
+
+
+ & \tabitem P0. FWA (Future Without Action)
+ \par\tabitem P1. $\Delta$ tasa de reemplado ($\kappa$) en 10\% sin reforma fiscal. 
+ \par\tabitem P2. $\Delta$ la tasa de reemplado ($\kappa$) en 20\% sin reforma fiscal.
+ \par\tabitem P3. $\Delta$ tasa de reemplado ($\kappa$) en 10\% con reforma fiscal. 
+ \par\tabitem P4. $\Delta$ tasa de reemplado ($\kappa$) en 20\% con reforma fiscal.
+
+ \\
+ 
+ \\[-1.8ex]\hline 
+\endhead
+	 \textbf{System Relationships (R)} & \multicolumn{1}{c} {\textbf{Metrics (M)}}   \\ 
+	 \hline \\[-1ex] 
+
+	\par\tabitem DSOLG &
+	Efectos en el ciclo de vida.
+	\par\tabitem Riqueza entre cohortes.
+	\par\tabitem Horas de trabajo entre cohortes.
+	\par ""
+	Efectos en el bienestar.
+	\par\tabitem Equivalencia hicksiana\\
+\hline 
+\hline \\[-1.8ex] 
+
+\end{longtable} 
+\end{document}

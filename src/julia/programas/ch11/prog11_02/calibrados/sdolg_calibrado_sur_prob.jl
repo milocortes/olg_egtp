@@ -16,7 +16,7 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "CRI"
+pais = "MEX"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -31,7 +31,7 @@ end
 #OLG_params["kappa"] = 0.3
 
 # number of transition periods
-global TT = 40
+global TT = 160
 
 # number of years the household lives
 global JJ = 16
@@ -62,7 +62,9 @@ global rho         = 0.98
 # production parameters
 global alpha = OLG_params["alpha"]
 global delta = 1.0-(1.0-OLG_params["delta"])^5
+#global delta = 1.0-(1.0-0.08)^5
 global Omega2 = OLG_params["Omega"]
+#global Omega2 = 1.9
 
 # size of the asset grid
 global a_l    = 0.0
@@ -73,9 +75,9 @@ global a_grow = 0.05
 global n_p   = (1.0+OLG_params["np"])^5-1.0
 
 # simulation parameters
-global damp    = 0.30
-global sig     = 1e-4
-global itermax = 70
+global damp    = 0.40
+global sig     = 1e-8
+global itermax = 50
 
 # counter variables
 #integer :: iter
@@ -353,6 +355,20 @@ file_name = "DSOLG_probs_OLG_params_"*pais*".csv"
 full_save_path = joinpath(pwd(), "output","csvs", pais, file_name)
 
 CSV.write(full_save_path, df_OLG_params)
+
+
+# set reform parameter (adjsust accordingly for Figure 11.7)
+kappa[1:TT] .= 0.5;
+
+global sig     = 1e-4
+# calculate transition path without lsra
+lsra_on = false;
+
+get_transition()
+
+# calculate transition path with lsra
+lsra_on = true;
+get_transition()
 
 #=
 # set reform parameter (adjsust accordingly for Figure 11.7)
