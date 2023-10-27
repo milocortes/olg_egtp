@@ -5,28 +5,38 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage{pdflscape}
+\usepackage{lscape}
 %% Para incluir longtables
 \usepackage{longtable}
 %% Para incluir item en las celdas de la tabla
 \usepackage{booktabs}% http://ctan.org/pkg/booktabs
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage[bottom=0.5cm, right=1.5cm, left=1.5cm, top=1.5cm]{geometry}
+
 \sffamily
 
 \begin{document}
 
+\begin{landscape}
 
-\begin{longtable}{p{5cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm}}  
+\begin{longtable}{p{5cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm} p{1cm}}  
 %\caption{Agentes del modelo}\label{tab:agentes}\\    %%%%<===
 \\[-1.8ex]\hline 
 \endhead
 \hline \\[-1.8ex] 
-\multicolumn{1}{c}{} & \multicolumn{2}{c}{México} & \multicolumn{1}{c}{} & \multicolumn{2}{c}{Chile} \\
+\multicolumn{1}{c}{} & \multicolumn{3}{c}{México} & \multicolumn{4}{c}{Chile} &   \multicolumn{4}{c}{Costa Rica} \\
+%\cline{2-4}
+%\cline{6-7}
 \\ 
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Modelo}  & \multicolumn{1}{c}{Observado}  & \multicolumn{2}{c}{Modelo} & \multicolumn{1}{c}{Observado} & \multicolumn{2}{c}{Modelo} & \multicolumn{1}{c}{Observado}\\
+\\
 \cline{2-3}
 \cline{5-6}
+\cline{8-9}
+
 \\ 
-          & Modelo  & Observado & & Modelo & Observado\\
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)}  & \multicolumn{1}{c}{}  & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\small (1)} & \multicolumn{1}{c}{\small (2)} & \multicolumn{1}{c}{}\\
+
 \\
 \hline \\[-1ex] 
 
@@ -44,52 +54,614 @@ Mercado de Bienes (\% PIB)
 
 \par ""
 
-Ingresos por Impuestos (\% PIB) 
+Tasas de impuestos (en \%) 
 
-\par\tabitem Impuestos al Consumo 
+\par\tabitem Consumo 
 
-\par\tabitem Impuestos al Ingreso
+\par\tabitem Ingreso
+
+\par\tabitem Ingreso medio
+
+\par\tabitem Ingreso máximo
+
+\par\tabitem Ingreso medio
+
 
 \par ""
 
-Pagos a pensiones (\% PIB)
+Ingresos por impuestos (\% PIB) 
+
+\par\tabitem Consumo 
+
+\par\tabitem Ingreso
+
+\par ""
+
+Gobierno (en \% PIB)
+\par\tabitem Endeudamiento público 
+\par\tabitem Flujo de deuda
+
+\par ""
+
+Sistema de pensiones 
+\par\tabitem Tasa de reemplazo
+\par\tabitem Pagos a pensiones (\% PIB)
+
+\par ""
+
+Otros
+\par\tabitem TC Poblacional (\%)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               MEXICO
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
-%%        Valores Modelo México
+%%        Valores Modelo DSOLG México
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
 &
+
+%%%% Mercado de Bienes
 \par ""
-\par 66.36
-\par 18.20
-\par 15.43
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
 \par ""
 \par ""
-\par 10.61
-\par 11.34
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
 \par ""
-\par 4.34
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades México
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
 %%        Valores Observados México
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
 &  
+%%%% Mercado de Bienes
 \par ""
-\par 64.22
-\par 18.20
-\par 21.07
-\par ""
-\par ""
-\par 6.62
-\par 6.00
-\par ""
-\par 2.7
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
 
-&  &  &   \\
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par 0.0
+% Impuesto al Ingreso Máximo (Observado)
+\par 0.0
+% Impuesto al Ingreso Mínimo (Observado)
+\par 0.0
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               CHILE
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par 0.0
+% Impuesto al Ingreso Máximo (Observado)
+\par 0.0
+% Impuesto al Ingreso Mínimo (Observado)
+\par 0.0
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+
+%               CHILE
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Modelo DSOLG Probabilidades Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&
+
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par 0.0
+% Impuesto al Ingreso Medio (Observado)
+\par ""
+% Impuesto al Ingreso Máximo (Observado)
+\par ""
+% Impuesto al Ingreso Mínimo (Observado)
+\par ""
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
+
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+%%        Valores Observados Chile
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++%%
+&  
+%%%% Mercado de Bienes
+\par ""
+% Consumo Privado % PIB 
+\par 0.0
+% Gasto Público % PIB 
+\par 0.0
+% Inversión % PIB 
+\par 0.0
+
+%%%% Tasas de impuestos
+\par ""
+\par ""
+% Impuesto al Consumo
+\par 0.0
+% Impuesto al Ingreso
+\par ""
+% Impuesto al Ingreso Medio (Observado)
+\par 0.0
+% Impuesto al Ingreso Máximo (Observado)
+\par 0.0
+% Impuesto al Ingreso Mínimo (Observado)
+\par 0.0
+\par ""
+\par ""
+
+%%%% Ingresos por impuestos
+% Por impuesto al consumo
+\par 0.0
+% Por impuesto al ingreso
+\par 0.0
+
+%%%% Gobierno
+\par ""
+\par ""
+% Endeudamiento Públicp
+\par 0.0
+% Costo necesitado para mantener el nivel de deuda constante
+\par 0.0
+
+%%%% Sistema de Pensiones
+\par ""
+\par ""
+% Tasa de Reemplazo
+\par 0.0
+% Pagos a pensiones
+\par 0.0
+
+%%%% Otros
+
+\par ""
+\par ""
+% Tasa de crecimiento poblacional
+\par 0.0
+
  \\
 \hline 
 \hline \\[-1.8ex] 
 
 \end{longtable} 
+\end{landscape}
 
 
 \end{document}

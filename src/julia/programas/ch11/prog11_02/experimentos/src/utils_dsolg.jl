@@ -3,6 +3,7 @@ using DataFrames
 using Query
 using OffsetArrays
 using Roots
+using HTTP.WebSockets
 
 #=#############################################################################
 # SUBROUTINE discretize_AR
@@ -1022,10 +1023,15 @@ function build_parameters(country, data_file_name)
     return Dict(zip(params_names, params_values))
 end 
 
-function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_p, kappa_p, policy_p, iteracion)
+
+macro Name(arg)
+    string(arg)
+end
+
+function DSOLG(calib_params, stress_params)
     try
         # number of transition periods
-        global TT = 40
+        global TT = 140
 
         # number of years the household lives
         global JJ = 16
@@ -1043,9 +1049,9 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
         global NA = 100
 
         # household preference parameters
-        global gamma = gamma_p
+        global gamma = calib_params["gamma"]
         global egam = 1.0 - 1.0/gamma
-        global nu    = nu_p
+        global nu    = calib_params["nu"]
         global beta  = 0.998^5
 
         # household risk process
@@ -1054,9 +1060,9 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
         global rho         = 0.98
 
         # production parameters
-        global alpha = alpha_p
-        global delta = 1.0-(1.0-delta_p)^5
-        global Omega2 = Omega_p
+        global alpha = calib_params["alpha"]
+        global delta = 1.0-(1.0-calib_params["delta"])^5
+        global Omega2 = calib_params["Omega"]
 
         # size of the asset grid
         global a_l    = 0.0
@@ -1064,12 +1070,12 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
         global a_grow = 0.05
 
         # demographic parameters
-        global n_p   = (1.0+np_p)^5-1.0
+        global n_p   = (1.0+calib_params["np"])^5-1.0
 
         # simulation parameters
-        global damp    = 0.30
+        global damp    = 0.40
         global sig     = 1e-8
-        global itermax = 120
+        global itermax = 50
 
         # counter variables
         #integer :: iter
@@ -1244,13 +1250,13 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
 
         # tax and transfers
         tax   .= 3
-        tauc  .= tauc_p
+        tauc  .= calib_params["tauc"]
         tauw  .= 0.0
         taur  .= 0.0
         taup  .= 0.1
-        kappa .= kappa_p
-        gy    = gy_p
-        by    = by_p/5.0
+        kappa .= calib_params["kappa"]
+        gy    = calib_params["gy"]
+        by    = calib_params["by"]/5.0
 
         beq[:,0] .= 0.0
         BQ[0] = 0.0
@@ -1277,8 +1283,38 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
         # calculate initial equilibrium
         get_SteadyState()
 
-        # set reform parameter (adjsust accordingly for Figure 11.7)
-        kappa[1:TT] .= 0.96*kappa[0];
+        #### ESTRESA PARÁMETROS
+
+        # household preference parameters
+        global gamma = stress_params["gamma"]
+        global egam = 1.0 - 1.0/gamma
+        global nu    = stress_params["nu"]
+
+        # production parameters
+        global alpha = stress_params["alpha"]
+        global delta = 1.0-(1.0-stress_params["delta"])^5
+        global Omega2 = stress_params["Omega"]
+
+        # demographic parameters
+        global n_p   = (1.0+stress_params["np"])^5-1.0
+
+        # tax and transfers
+        tauc  .= stress_params["tauc"]
+        kappa .= stress_params["kappa"]
+        gy    = stress_params["gy"]
+        by    = stress_params["by"]/5.0
+
+
+        # Define la política 
+        
+        if stress_params["policy"] == 1
+            println("BAU")
+        elseif stress_params["policy"] == 2
+            kappa[1:TT] .= 1.10*kappa[0];
+        elseif stress_params["policy"] == 3
+            kappa[1:TT] .= 1.20*kappa[0];
+        end 
+
         global sig     = 1e-4
 
         # calculate transition path without lsra
@@ -1287,13 +1323,65 @@ function DSOLG(Omega_p, alpha_p, delta_p, np_p, nu_p, gamma_p, gy_p, by_p, tauc_
         get_transition()
 
         # calculate transition path with lsra
-        lsra_on = true;
-        get_transition()
+        #lsra_on = true;
+        #get_transition()
 
+        #### GUARDAMOS LOS RESULTADOS
 
+        ## Variables agregadas
+
+        results_1D_df = []
+
+        for param = [:r, :rn, :w, :wn, :p, :KK, :AA, :BB, :LL, :HH, :YY, :CC, :II, :GG, :INC, :BQ, :tauc, :tauw, :taur, :taup, :kappa, :PP]
+            push!(results_1D_df,
+                @eval DataFrame($param = [$param...])  
+            )
+        end
+
+        results_1D_df = hcat(results_1D_df...)
+
+        ## Variables por cohorte
+
+        results_2D_df = []
+
+        for param = [:pen, :c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh]
+            @eval col_names = [string(@Name($param),"_cohort_",i) for i in 1:size($param.parent)[1]]
+            push!(results_2D_df,
+                @eval DataFrame(OffsetArrays.no_offset_view($param)', col_names)
+            )
+        end
+
+        results_2D_df = hcat(results_2D_df...)
+
+        ## Recaudación de impuestos
+        df_tax_rev = DataFrame(OffsetArrays.no_offset_view(taxrev)', ["tauc_rev", "tauw_rev", "taur_rev", "total_tax_rev"])
+
+        results_all = hcat([ DataFrame(time = 0:TT, run_id = [stress_params["iteracion"] for i in 0:TT]), results_1D_df, results_2D_df, df_tax_rev]...)
+
+        # Agrega ganancia de eficiencia
+        
+        #results_all[:, :hicksian] .= (Lstar^(1.0/egam)-1.0)*100.0
+        
+        file_name = "DSOLG_output_"*stress_params["pais"]*"_run_id_"*string(stress_params["iteracion"])*".csv"
+        
+        full_save_path = joinpath(abspath(pwd(), "..", "output"), stress_params["pais"], file_name)
+        
+        #return results_all
+        CSV.write(full_save_path, results_all)
 
     catch e
         println("ERROR")
     end
 
+end
+
+
+function get_run_id()
+    global id
+    WebSockets.open("ws://127.0.0.1:8081") do ws
+           send(ws, "Hello")
+           global id = parse(Int,receive(ws))
+           
+       end;
+    return id
 end

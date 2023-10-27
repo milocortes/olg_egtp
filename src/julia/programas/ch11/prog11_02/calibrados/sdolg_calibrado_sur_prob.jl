@@ -31,7 +31,7 @@ end
 #OLG_params["kappa"] = 0.3
 
 # number of transition periods
-global TT = 160
+global TT = 100
 
 # number of years the household lives
 global JJ = 16
@@ -63,8 +63,9 @@ global rho         = 0.98
 global alpha = OLG_params["alpha"]
 global delta = 1.0-(1.0-OLG_params["delta"])^5
 #global delta = 1.0-(1.0-0.08)^5
+#global Omega2 = OLG_params["Omega"]
+OLG_params["Omega"] = 1.85
 global Omega2 = OLG_params["Omega"]
-#global Omega2 = 1.9
 
 # size of the asset grid
 global a_l    = 0.0
