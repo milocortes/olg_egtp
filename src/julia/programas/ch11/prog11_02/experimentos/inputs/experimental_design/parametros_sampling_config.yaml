@@ -3,23 +3,23 @@ simulacion:
   LHS_sampling : 2000
 parametros:
   # Technology level (Yₜ = ΩKₜᵅLₜ⁽¹⁻ᵅ))
-  Omega : [0.97, 1.03]
+  Omega : [1.00, 1.00]
   # Capital elasticity
-  alpha : [0.97, 1.03]
+  alpha : [0.90, 1.1]
   # Depreciation rate   
-  delta :  [0.97, 1.03]
+  delta :  [1.0, 1.0]
   # Population growth rate     
-  np : [0.97, 1.03]  
+  np : [0.90, 1.1]  
   # Parameter which governs the preference of the household for consumption as compared to leissure    
-  nu : [0.97, 1.03]
+  nu : [0.90, 1.1]
   # Coefficient of relative risk aversion (or the reciprocal of the elasticity of intertemporal substitution)
-  gamma : [0.97, 1.03]
+  gamma : [0.90, 1.1]
   # Survival probabilities
   # Age earnings process
   # Public spending
-  gy : [1.0, 1.0]
+  gy : [0.90, 1.1]
   # Public debt?   
-  by : [1.0, 1.0]
+  by : [0.90, 1.1]
   # Consumption tax rate
   tauc : [1.0, 1.0]
   # Replacement rate
