@@ -1300,13 +1300,15 @@ function DSOLG(calib_params, stress_params)
 
         # tax and transfers
         tauc  .= stress_params["tauc"]
-        kappa .= stress_params["kappa"]
+        kappa[1:TT] .= stress_params["kappa"]
         gy    = stress_params["gy"]
         by    = stress_params["by"]/5.0
 
+        psi[7:17,1:TT] .= psi[7:17,1:TT]*stress_params["psi_scalar"]
+        psi[psi.>1.00] .= 1.00
 
         # Define la política 
-        
+        #=
         if stress_params["policy"] == 1
             println("BAU")
         elseif stress_params["policy"] == 2
@@ -1314,7 +1316,7 @@ function DSOLG(calib_params, stress_params)
         elseif stress_params["policy"] == 3
             kappa[1:TT] .= 1.20*kappa[0];
         end 
-
+        =#
         global sig     = 1e-4
 
         # calculate transition path without lsra

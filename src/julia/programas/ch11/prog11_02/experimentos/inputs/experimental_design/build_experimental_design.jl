@@ -34,12 +34,12 @@ plan = randomLHC(parameters["simulacion"]["LHS_sampling"],length(parameters["par
 parameters_LHC_paises = Dict( pais => DataFrame(scaleLHC(plan, bounds), parameters["parametros"].keys) for (pais, bounds) in calib_params_paises)
 
 ## Definimos un dataframe con 3 políticas
-policies = DataFrame((policy=[1, 2, 3])) 
+#policies = DataFrame((policy=[1, 2, 3])) 
 
 ## Hacemos un producto cruz entre el muestreo y las políticas
-for (k,v) in parameters_LHC_paises
-    parameters_LHC_paises[k] = crossjoin(v, policies)
-end
+#for (k,v) in parameters_LHC_paises
+#    parameters_LHC_paises[k] = crossjoin(v, policies)
+#end
 
 
 ## Guardamos el diseño experimental para cada país

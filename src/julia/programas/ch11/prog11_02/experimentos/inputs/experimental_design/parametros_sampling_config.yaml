@@ -15,6 +15,7 @@ parametros:
   # Coefficient of relative risk aversion (or the reciprocal of the elasticity of intertemporal substitution)
   gamma : [0.90, 1.1]
   # Survival probabilities
+  psi_scalar : [0.90, 1.1]
   # Age earnings process
   # Public spending
   gy : [0.90, 1.1]
@@ -23,4 +24,4 @@ parametros:
   # Consumption tax rate
   tauc : [1.0, 1.0]
   # Replacement rate
-  kappa : [1.0, 1.0]
+  kappa : [0.90, 1.1]
