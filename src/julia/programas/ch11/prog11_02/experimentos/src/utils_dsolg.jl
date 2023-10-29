@@ -1358,13 +1358,13 @@ function DSOLG(calib_params, stress_params)
         ## Recaudación de impuestos
         df_tax_rev = DataFrame(OffsetArrays.no_offset_view(taxrev)', ["tauc_rev", "tauw_rev", "taur_rev", "total_tax_rev"])
 
-        results_all = hcat([ DataFrame(time = 0:TT, run_id = [stress_params["iteracion"] for i in 0:TT]), results_1D_df, results_2D_df, df_tax_rev]...)
+        results_all = hcat([ DataFrame(time = 0:TT, run_id = [stress_params["it"] for i in 0:TT]), results_1D_df, results_2D_df, df_tax_rev]...)
 
         # Agrega ganancia de eficiencia
         
         #results_all[:, :hicksian] .= (Lstar^(1.0/egam)-1.0)*100.0
         
-        file_name = "DSOLG_output_"*stress_params["pais"]*"_run_id_"*string(stress_params["iteracion"])*".csv"
+        file_name = "DSOLG_output_"*stress_params["pais"]*"_run_id_"*string(stress_params["it"])*".csv"
         
         full_save_path = joinpath(abspath(pwd(), "..", "output"), stress_params["pais"], file_name)
         
