@@ -15,7 +15,7 @@ parametros:
   # Coefficient of relative risk aversion (or the reciprocal of the elasticity of intertemporal substitution)
   gamma : [0.90, 1.1]
   # Survival probabilities
-  psi_scalar : [0.90, 1.1]
+  psi_scalar : [0.95, 1.05]
   # Age earnings process
   # Public spending
   gy : [0.90, 1.1]
