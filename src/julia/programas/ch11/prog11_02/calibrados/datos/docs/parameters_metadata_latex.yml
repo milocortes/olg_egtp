@@ -1,0 +1,179 @@
+modelo:
+    description:  >
+      Descripción de los parámetros del modelo de generaciones traslapadas. 
+      Se detalla cuales fueron las fuentes consultadas para los parámetros exógénos así
+      como también la estrategia de calibración de los parámetros calibrados
+
+parametros:
+    - latex:   $TT$
+      descrip: Número de periodos de transición. Cada periodo equivale a 5 años en la vida real.
+      exogeno_param: X
+      calib_param:  
+      target:
+      fuente: Definido por criterio numérico
+
+    - latex: $JJ$
+      descrip: >
+        Número de años que vive un hogar. Los hogares empiezan su vida económica a los 20 años ($j=1$).
+        Viven hasta los 100 años ($JJ=16$).
+      exogeno_param: X
+      calib_param:  
+      target:
+      fuente: Definido por Fehr y Kindermann (2018).
+
+    - latex: $JR$
+      descrip: Edad obligatoria de retiro. Los hogares se retiran a los 65 años ($j_r=10$) 
+      exogeno_param: X
+      calib_param:  
+      target:
+      fuente: Definido por Fehr y Kindermann (2018).
+
+    - latex: $\gamma$
+      descrip: Coeficiente de aversión relativa al riesgo (recíproco de la elasticidad de sustitución intertemporal)
+      exogeno_param: 
+      calib_param:  X
+      target:
+      fuente: >
+        El parámetro fue calibrado hasta obtener las salidas más cercanas a los valores observados
+        de las razones del Consumo e Inversión con respecto al PIB.
+      
+    - latex: $\nu$
+      descrip: Parámetro de la intensidad de preferencia de ocio.
+      exogeno_param: X
+      calib_param:  
+      target:
+      fuente: Se consultó PWT 10.01, Penn World Table
+    
+    - latex: $\beta$
+      descrip: Factor de descuento de tiempo.
+      exogeno_param: 
+      calib_param:  X
+      target:
+      fuente: Calibrado por Fehr y Kindermann (2018).
+
+    - latex: $\sigma_{\theta}^2$
+      descrip: Varianza del efecto fíjo $\theta$ sobre la productividad.
+      exogeno_param: 
+      calib_param:  X
+      target:
+      fuente: Calibrado por Fehr y Kindermann (2018).
+
+    - latex: $\sigma_\epsilon^2$
+      descrip: Varianza del componente autoregresivo $\eta$.
+      exogeno_param: 
+      calib_param:  X
+      target:
+      fuente: Calibrado por Fehr y Kindermann (2018).
+       
+    - latex: $\alpha$
+      descrip: Elasticidad del capital en la función de producción. Corresponde a la razón capital en el producto.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó PWT 10.01, Penn World Table
+
+    - latex: $\delta$
+      descrip: Tasa de depreciación de capital.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó PWT 10.01, Penn World Table
+
+    - latex: $\Omega$
+      descrip: Nivel de tecnología.
+      exogeno_param: 
+      calib_param:  X
+      target:
+      fuente: Calibrado numéricamente para ajustar la tasa de salarios a $w_t=1$.
+
+    - latex: $n_p$
+      descrip: Tasa de crecimiento poblacional.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó OECD, Fertility rates 
+    
+    - latex: $gy$
+      descrip: Gasto público como porcentage del PIB.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó PWT 10.01, Penn World Table
+
+    - latex: $by$
+      descrip: Endeudamiento público como porcentage del PIB.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Banco de datos de CEPAL
+
+    - latex: $\kappa$
+      descrip: Tasa de reemplazo de sistema de pensiones.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó OECD-Founded Pension Indicators-Contributions
+    
+    - latex: $\psi_j$
+      descrip: Tasas de supervivencia por cohorte de edad.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Definido por Fehr y Kindermann (2018).
+
+    - latex: $e_j$
+      descrip: Perfil de eficiencia de ingresos laborales por cohorte de edad.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Definido por Fehr y Kindermann (2018).
+
+    - latex: $\tau_t^c$
+      descrip: Tasa de impuesto al consumo.
+      exogeno_param: X 
+      calib_param:  
+      target:
+      fuente: Se consultó OECD Tax Database
+
+    - latex: $\tau_t^w$
+      descrip: Tasa de impuesto al ingreso laboral.
+      exogeno_param: X 
+      calib_param:  
+      target: X
+      fuente: Se consultó OECD Tax Database
+         
+    - latex: $\tau_t^r$
+      descrip: Tasa de impuesto al ingreso de capital.
+      exogeno_param:  
+      calib_param:  
+      target: X
+      fuente: Se consultó OECD Tax Database
+
+    - latex: $\tau_t^p$
+      descrip: Tasa de contribución sobre nómina al sistema de pensiones.
+      exogeno_param:  
+      calib_param:  
+      target: X
+      fuente: Se consultó OECD-Founded Pension Indicators-Contributions
+
+    - latex: $\dfrac{PEN}{GDP}$.
+      descrip: Pago a pensiones como porcentaje del PIB.
+      exogeno_param:  
+      calib_param:  
+      target: X
+      fuente: Se consultó OECD-Pensions at Glance-Public expenditure on pensions
+
+    - latex: $\dfrac{C}{GDP}$.
+      descrip: Consumo privado como porcentaje del PIB.
+      exogeno_param:  
+      calib_param:  
+      target: X
+      fuente: Se consultó PWT 10.01, Penn World Table
+
+    - latex: $\dfrac{I}{GDP}$.
+      descrip: Inversión como porcentaje del PIB.
+      exogeno_param:  
+      calib_param:  
+      target: X
+      fuente: Se consultó PWT 10.01, Penn World Table
+                  

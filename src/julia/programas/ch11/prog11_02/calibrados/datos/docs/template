@@ -1,0 +1,27 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage[landscape, top=1cm,bottom=1cm,left=4cm,right=1cm]{geometry}
+
+\begin{document}
+\sffamily
+\begin{landscape}
+
+\small
+\begin{longtable}{p{1cm} p{6cm} p{1cm} p{1cm} p{1cm} p{5cm}}
+
+\hline \multicolumn{1}{c}{\textbf{Parámetro}} & \multicolumn{1}{c}{\textbf{Descripción}} & \multicolumn{1}{c}{\textbf{Exógeno}} & \multicolumn{1}{c}{\textbf{Calibrado}} & \multicolumn{1}{c}{\textbf{Target}} & \multicolumn{1}{c}{\textbf{Descripción}} \\ \hline 
+
+        {% for info in parametros-%}
+        {{info["latex"]}} & {{info["descrip"]}} & {{info["exogeno_param"]}} & {{info["calib_param"]}} & {{info["target"]}} &  {{info["fuente"]}} \\
+        \hline 
+        {% endfor %}
+
+\end{longtable}
+\end{landscape}
+
+\end{document}

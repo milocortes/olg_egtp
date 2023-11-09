@@ -1,0 +1,75 @@
+
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage[landscape, top=1cm,bottom=1cm,left=4cm,right=1cm]{geometry}
+
+\begin{document}
+\sffamily
+\begin{landscape}
+
+\small
+\begin{longtable}{p{1cm} p{6cm} p{1cm} p{1cm} p{1cm} p{5cm}}
+
+\hline \multicolumn{1}{c}{\textbf{Parámetro}} & \multicolumn{1}{c}{\textbf{Descripción}} & \multicolumn{1}{c}{\textbf{Exógeno}} & \multicolumn{1}{c}{\textbf{Calibrado}} & \multicolumn{1}{c}{\textbf{Target}} & \multicolumn{1}{c}{\textbf{Descripción}} \\ \hline 
+
+        $TT$ & Número de periodos de transición. Cada periodo equivale a 5 años en la vida real. & X &  &  &  Definido por criterio numérico \\
+        \hline 
+        $JJ$ & Número de años que vive un hogar. Los hogares empiezan su vida económica a los 20 años ($j=1$). Viven hasta los 100 años ($JJ=16$).
+ & X &  &  &  Definido por Fehr y Kindermann (2018). \\
+        \hline 
+        $JR$ & Edad obligatoria de retiro. Los hogares se retiran a los 65 años ($j_r=10$) & X &  &  &  Definido por Fehr y Kindermann (2018). \\
+        \hline 
+        $\gamma$ & Coeficiente de aversión relativa al riesgo (recíproco de la elasticidad de sustitución intertemporal) &  & X &  &  El parámetro fue calibrado hasta obtener las salidas más cercanas a los valores observados de las razones del Consumo e Inversión con respecto al PIB.
+ \\
+        \hline 
+        $\nu$ & Parámetro de la intensidad de preferencia de ocio. & X &  &  &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        $\beta$ & Factor de descuento de tiempo. &  & X &  &  Calibrado por Fehr y Kindermann (2018). \\
+        \hline 
+        $\sigma_{\theta}^2$ & Varianza del efecto fíjo $\theta$ sobre la productividad. &  & X &  &  Calibrado por Fehr y Kindermann (2018). \\
+        \hline 
+        $\sigma_\epsilon^2$ & Varianza del componente autoregresivo $\eta$. &  & X &  &  Calibrado por Fehr y Kindermann (2018). \\
+        \hline 
+        $\alpha$ & Elasticidad del capital en la función de producción. Corresponde a la razón capital en el producto. & X &  &  &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        $\delta$ & Tasa de depreciación de capital. & X &  &  &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        $\Omega$ & Nivel de tecnología. &  & X &  &  Calibrado numéricamente para ajustar la tasa de salarios a $w_t=1$. \\
+        \hline 
+        $n_p$ & Tasa de crecimiento poblacional. & X &  &  &  Se consultó OECD, Fertility rates \\
+        \hline 
+        $gy$ & Gasto público como porcentage del PIB. & X &  &  &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        $by$ & Endeudamiento público como porcentage del PIB. & X &  &  &  Banco de datos de CEPAL \\
+        \hline 
+        $\kappa$ & Tasa de reemplazo de sistema de pensiones. & X &  &  &  Se consultó OECD-Founded Pension Indicators-Contributions \\
+        \hline 
+        $\psi_j$ & Tasas de supervivencia por cohorte de edad. & X &  &  &  Definido por Fehr y Kindermann (2018). \\
+        \hline 
+        $e_j$ & Perfil de eficiencia de ingresos laborales por cohorte de edad. & X &  &  &  Definido por Fehr y Kindermann (2018). \\
+        \hline 
+        $\tau_t^c$ & Tasa de impuesto al consumo. & X &  &  &  Se consultó OECD Tax Database \\
+        \hline 
+        $\tau_t^w$ & Tasa de impuesto al ingreso laboral. & X &  & X &  Se consultó OECD Tax Database \\
+        \hline 
+        $\tau_t^r$ & Tasa de impuesto al ingreso de capital. &  &  & X &  Se consultó OECD Tax Database \\
+        \hline 
+        $\tau_t^p$ & Tasa de contribución sobre nómina al sistema de pensiones. &  &  & X &  Se consultó OECD-Founded Pension Indicators-Contributions \\
+        \hline 
+        $\dfrac{PEN}{GDP}$. & Pago a pensiones como porcentaje del PIB. &  &  & X &  Se consultó OECD-Pensions at Glance-Public expenditure on pensions \\
+        \hline 
+        $\dfrac{C}{GDP}$. & Consumo privado como porcentaje del PIB. &  &  & X &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        $\dfrac{I}{GDP}$. & Inversión como porcentaje del PIB. &  &  & X &  Se consultó PWT 10.01, Penn World Table \\
+        \hline 
+        
+
+\end{longtable}
+\end{landscape}
+
+\end{document}
