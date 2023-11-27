@@ -16,7 +16,7 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "MEX"
+pais = "CRI"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -357,6 +357,25 @@ full_save_path = joinpath(pwd(), "output","csvs", pais, file_name)
 
 CSV.write(full_save_path, df_OLG_params)
 
+#### Guardamos datos a nivel de cohorte
+## Cohort relative size
+m_to_df = OffsetArrays.no_offset_view(m[:,0])
+## assets by cohort
+a_coh_to_df = OffsetArrays.no_offset_view(a_coh[:,0])
+## income by cohort
+y_coh_to_df = OffsetArrays.no_offset_view(y_coh[:,0])
+## labour hours by cohort
+l_coh_to_df = OffsetArrays.no_offset_view(l_coh[:,0])
+## consumption by cohort
+c_coh_to_df = OffsetArrays.no_offset_view(c_coh[:,0])
+
+## join data in data frame
+df_by_cohort = DataFrame(m = m_to_df, a_coh = a_coh_to_df, y_coh = y_coh_to_df, l_coh = l_coh_to_df, c_coh = c_coh_to_df)
+
+## save dataframe
+file_name = "DSOLG_probs_OLG_params_by_cohort_"*pais*".csv"
+full_save_path = joinpath(pwd(), "output","csvs", pais, file_name)
+CSV.write(full_save_path, df_by_cohort)
 
 # set reform parameter (adjsust accordingly for Figure 11.7)
 kappa[1:TT] .= 0.5;
