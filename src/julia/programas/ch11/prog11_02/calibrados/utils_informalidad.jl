@@ -299,7 +299,6 @@ function get_SteadyState()
 
     # iterate until value function converges
     for iter in 1:itermax
-        print(iter)
         # derive prices
         prices(0)
 
@@ -406,7 +405,7 @@ function solve_household(ij_in, it_in, ik_in)
                     global ik_com = ik_in
 
                     # solve the household problem using rootfinding
-                    x_root = fzero(foc, x_in)
+                    x_root = fzero(foc, x_in, xatol=1e-12)
                     foc(x_root)
                     # write screen output in case of a problem
                     #if(check)write(*,'(a, 5i4)')'ERROR IN ROOTFINDING : ', ij, ia, ip, is, it
@@ -525,6 +524,13 @@ end
 # subroutine for calculating quantities in a certain
 function aggregation(it)
 
+    # calculate fraction of low and high households skills
+    for ij in 1:JJ
+        for ik in 1:SS
+            frac_phi[ij, it, ik] = sum(phi[ij, :, :, :, it, ik])
+        end
+    end
+
     global SS
     m_coh = zeros(JJ,SS)
 
@@ -549,10 +555,10 @@ function aggregation(it)
             for ip in 1:NP
                 for is in 1:NS
                     for ik in 1:SS
-                        c_coh[ij, it, ik] = c_coh[ij, it, ik] + c[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
-                        l_coh[ij, it, ik] = l_coh[ij, it, ik] + l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
-                        y_coh[ij, it, ik] = y_coh[ij, it, ik] + eff[ij, ik]*theta[ip]*eta[is]*l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
-                        a_coh[ij, it, ik] = a_coh[ij, it, ik] + a[ia]*phi[ij, ia, ip, is, it, ik]
+                        c_coh[ij, it, ik] = c_coh[ij, it, ik] + c[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        l_coh[ij, it, ik] = l_coh[ij, it, ik] + l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        y_coh[ij, it, ik] = y_coh[ij, it, ik] + eff[ij, ik]*theta[ip]*eta[is]*l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        a_coh[ij, it, ik] = a_coh[ij, it, ik] + a[ia]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
 
                         # exclude households who die
                         if(ij >= JR && ia == 0 && (kappa[0] <= 1e-10 || kappa[1] <= 1e-10))
@@ -560,12 +566,12 @@ function aggregation(it)
                         end
 
                         if(aplus[ij, ia, ip, is, it, ik] < 1e-4)
-                            FLC[ij, it, ik] = FLC[ij, it, ik] + phi[ij, ia, ip, is, it, ik]
+                            FLC[ij, it, ik] = FLC[ij, it, ik] + phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
                         end 
     
-                        VV_coh[ij, it, ik] = VV_coh[ij, it, ik] + VV[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
-                        m_coh[ij, ik]      = m_coh[ij, ik] + phi[ij, ia, ip, is, it, ik]
-                        beq_coh[ij, it, ik] = beq_coh[ij, it, ik] + a[ia]*(1.0 + rn[it])* (1.0 - psi[ij, it])*phi[ij, ia, ip, is, it, ik]/psi[ij, it] 
+                        VV_coh[ij, it, ik] = VV_coh[ij, it, ik] + VV[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        m_coh[ij, ik]      = m_coh[ij, ik] + phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        beq_coh[ij, it, ik] = beq_coh[ij, it, ik] + a[ia]*(1.0 + rn[it])* (1.0 - psi[ij, it])*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]/psi[ij, it] 
                     end
                 end
             end
@@ -623,6 +629,8 @@ end
 # subroutine for calculating government parameters
 function government(it)
 
+    global universal
+
     # last year
     itm = year(it, 2, 1)
     itp = year(it, 1, 2)
@@ -631,10 +639,16 @@ function government(it)
     GG[it] = gy*YY[0]
     BB[it] = by*YY[0]
 
-    for ik in 1:SS
-        pen[JR:JJ, it, ik] .= kappa[it]*INC[itm]
-    end
+    #for ik in 1:SS
+    #    pen[JR:JJ, it, ik] .= kappa[it]*INC[itm]
+    #end
 
+    pen[JR:JJ, it,1] .= kappa[it]*INC[itm]
+
+    if universal
+        pen[JR:JJ, it, 2] .= kappa[it]*INC[itm]
+    end
+    
     PP[it] = 0.0
 
     for ij in JR:JJ

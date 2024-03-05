@@ -67,7 +67,7 @@ global alpha = OLG_params["alpha"]
 global delta = 1.0-(1.0-OLG_params["delta"])^5
 #global delta = 1.0-(1.0-0.08)^5
 #global Omega2 = OLG_params["Omega"]
-OLG_params["Omega"] = 1.85
+OLG_params["Omega"] = 1.45
 global Omega2 = OLG_params["Omega"]
 
 # size of the asset grid
@@ -79,7 +79,7 @@ global a_grow = 0.05
 global n_p   = (1.0+OLG_params["np"])^5-1.0
 
 # simulation parameters
-global damp    = 0.80
+global damp    = 0.30
 global sig     = 1e-8
 global itermax = 50
 
@@ -128,7 +128,7 @@ global lsra_on
 global Vstar
 
 # cohort aggregate variables
-for param = [:c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh]
+for param = [:c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh, :frac_phi]
     @eval global $param = OffsetArray(zeros(JJ, TT+1, SS), 1:JJ, 0:TT, 1:SS) ;
 end
 
@@ -179,7 +179,7 @@ end
 
 global DIFF = OffsetArray(zeros(TT+1),0:TT)
 
-
+global universal = false
 
 ##### initializes the remaining model parameters and variables
 
@@ -214,7 +214,7 @@ omega[7:16] .= 0.0
 # set up population structure
 for it in 0:TT
     for ik in 1:SS
-        m[1,it,ik] = 1.0
+        m[1,it,ik] = 0.5
         GAM[1,it,ik] = omega[1]
         itm = year2(it, -1)
         for ij in 2:JJ
@@ -255,7 +255,7 @@ eff[8,1] = 1.9392
 eff[9,1] = 1.9007
 eff[JR:JJ,1] .= 0.0
 
-eff[2:end,2] = 0.8.*eff[2:end,1]
+eff[2:end,2] = 0.7.*eff[2:end,1]
 
 # initialize fixed effect
 dist_theta .= 1.0/float(NP)
@@ -293,8 +293,8 @@ BB .= by*YY[0]
 
 pen .= 0.0
 pen[JR:JJ, 0, 1] .= kappa[0]
-pen[JR:JJ, 0, 2] .= kappa[0]
-
+#pen[JR:JJ, 0, 2] .= kappa[0]
+pen[JR:JJ, 0, 2] .= 0
 
 global ial_v = Array{Int64}(undef, 1)
 global iar_v = Array{Int64}(undef, 1)
@@ -405,6 +405,7 @@ kappa[1:TT] .= 0.5;
 global sig     = 1e-4
 # calculate transition path without lsra
 lsra_on = false;
+global universal = false
 
 get_transition()
 
