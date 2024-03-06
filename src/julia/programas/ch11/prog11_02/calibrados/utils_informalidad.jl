@@ -643,10 +643,14 @@ function government(it)
     #    pen[JR:JJ, it, ik] .= kappa[it]*INC[itm]
     #end
 
-    pen[JR:JJ, it,1] .= kappa[it]*INC[itm]
-
+    
     if universal
-        pen[JR:JJ, it, 2] .= kappa[it]*INC[itm]
+        pen[JR:JJ, it, 1] .= (kappa[it]*0.5)*INC[itm]
+        pen[JR:JJ, it, 2] .= (kappa[it]*0.5)*INC[itm]
+    else
+        #pen[JR:JJ, it, 1] .= kappa[it]*(0.75*INC[itm])
+        #pen[JR:JJ, it, 2] .= (kappa[it]*0.25)*(0.25*INC[itm])
+        pen[JR:JJ, it, 1] .= kappa[it]*INC[itm]  
     end
     
     PP[it] = 0.0

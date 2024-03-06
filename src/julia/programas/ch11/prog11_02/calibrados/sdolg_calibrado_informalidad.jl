@@ -214,7 +214,12 @@ omega[7:16] .= 0.0
 # set up population structure
 for it in 0:TT
     for ik in 1:SS
-        m[1,it,ik] = 0.5
+
+        if ik == 1
+            m[1,it,ik] = 0.35
+        else
+            m[1,it,ik] = 0.65
+        end
         GAM[1,it,ik] = omega[1]
         itm = year2(it, -1)
         for ij in 2:JJ
@@ -244,18 +249,26 @@ end
 
 # initialize age earnings process
 eff[1,1] = 1.0000
-eff[1,2] = 1.0000
-eff[2,1] = 1.3527
-eff[3,1] = 1.6952
-eff[4,1] = 1.8279
-eff[5,1] = 1.9606
-eff[6,1] = 1.9692
-eff[7,1] = 1.9692
-eff[8,1] = 1.9392
-eff[9,1] = 1.9007
+eff[2,1] = 1.377623
+eff[3,1] = 1.539737
+eff[4,1] = 1.564534
+eff[5,1] = 1.747741
+eff[6,1] = 1.569338
+eff[7,1] = 1.564102
+eff[8,1] = 1.618386
+eff[9,1] = 1.088493
 eff[JR:JJ,1] .= 0.0
 
-eff[2:end,2] = 0.7.*eff[2:end,1]
+eff[1,2] = 1.044942
+eff[2,2] = 1.120803
+eff[3,2] = 1.15399
+eff[4,2] = 1.12119
+eff[5,2] = 1.121919
+eff[6,2] = 1.0938
+eff[7,2] = 1.061719
+eff[8,2] = 1.024641
+eff[9,2] = 1.403929
+eff[JR:JJ,2] = 0.0
 
 # initialize fixed effect
 dist_theta .= 1.0/float(NP)
@@ -300,8 +313,6 @@ global ial_v = Array{Int64}(undef, 1)
 global iar_v = Array{Int64}(undef, 1)
 global varphi_v = zeros(1)
 
-
-
 # calculate initial equilibrium
 get_SteadyState()
 
@@ -344,7 +355,7 @@ gov_accounts = DataFrame(
 pension_system = DataFrame(
     etiqueta = ["valor", "(in %)"],
     TAUP = [taup[0]*w[0]*LL[0], taup[0]*100], 
-    PEN = [pen[JR, 0], kappa[0]],
+    PEN = [pen[JR, 0, 1] + pen[JR, 0, 2], kappa[0]],
     PP = [PP[0], PP[0]/YY[0]*100]
 );
 capital_market
@@ -405,18 +416,16 @@ kappa[1:TT] .= 0.5;
 global sig     = 1e-4
 # calculate transition path without lsra
 lsra_on = false;
-global universal = false
+global universal = true
 
 get_transition()
-
-
-
 
 plot([i for i in 20:5:75],  l_coh[1:12,0,1], title = "Average life-cycle", label = "Hours Worked - Pre-Reforma")
 plot!([i for i in 20:5:75],  l_coh[1:12,40,1], label = "Hours Worked - Post-Reforma")
 
 
-plot([i for i in 20:5:75], y_coh[1:12,0,1] + pen[1:12,0,1], ylimits=(0.2,1), title = "Average life-cycle", label = "Labour-related Income - High Skill (Pre-Reforma)", 
+
+plot([i for i in 20:5:75], y_coh[1:12,0,1] + pen[1:12,0,1], title = "Average life-cycle", label = "Labour-related Income - High Skill (Pre-Reforma)", 
                                                             linestyle=:dot, 
                                                             marker = :circle, 
                                                             markersize = 4,
@@ -428,12 +437,6 @@ plot!([i for i in 20:5:75], y_coh[1:12,0,2] + pen[1:12,0,2], label = "Labour-rel
                                                             markersize = 4,
                                                             seriescolor = :red)
 
-plot!([i for i in 20:5:75], y_coh[1:12,0,2] , label = "Labour-related Income - Low Skill-Sin Pensión(Pre-Reforma)", 
-                                                            linestyle=:dot, 
-                                                            marker = :circle, 
-                                                            markersize = 4,
-                                                            seriescolor = :orange)
-
 plot!([i for i in 20:5:75], y_coh[1:12,40,1] + pen[1:12,40,1], label = "Labour-related Income - High Skill (Post-Reforma)", 
                                                             linestyle=:dash, 
                                                             marker = :sticks, 
@@ -443,6 +446,20 @@ plot!([i for i in 20:5:75], y_coh[1:12,40,1] + pen[1:12,40,1], label = "Labour-r
 plot!([i for i in 20:5:75], y_coh[1:12,40,2] + pen[1:12,40,2], label = "Labour-related Income - Low Skill (Post-Reforma)", 
                                                             linestyle=:dash, 
                                                             marker = :sticks, 
+                                                            markersize = 4,
+                                                            seriescolor = :red)
+
+#### 
+
+plot([i for i in 20:5:75], l_coh[1:12,0,1] , title = "Average life-cycle", label = "Horas Trabajadas - High Skill (Pre-Reforma)", 
+                                                            linestyle=:dot, 
+                                                            marker = :circle, 
+                                                            markersize = 4,
+                                                            seriescolor = :blue)
+
+plot!([i for i in 20:5:75], l_coh[1:12,0,2], label = "Horas Trabajadas - Low Skill (Pre-Reforma)", 
+                                                            linestyle=:dot, 
+                                                            marker = :circle, 
                                                             markersize = 4,
                                                             seriescolor = :red)
 
