@@ -424,6 +424,7 @@ plot([i for i in 20:5:75],  l_coh[1:12,0,1], title = "Average life-cycle", label
 plot!([i for i in 20:5:75],  l_coh[1:12,40,1], label = "Hours Worked - Post-Reforma")
 
 
+using Plots
 
 plot([i for i in 20:5:75], y_coh[1:12,0,1] + pen[1:12,0,1], title = "Average life-cycle", label = "Labour-related Income - High Skill (Pre-Reforma)", 
                                                             linestyle=:dot, 
