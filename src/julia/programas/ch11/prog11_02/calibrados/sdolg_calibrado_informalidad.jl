@@ -16,7 +16,7 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "MEX"
+pais = "CHL"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -46,7 +46,7 @@ global NP = 2
 global NS = 5
 
 # number of points on the asset grid
-global NA = 200
+global NA = 300
 
 # number of skill group
 global SS = 2
@@ -79,7 +79,7 @@ global a_grow = 0.05
 global n_p   = (1.0+OLG_params["np"])^5-1.0
 
 # simulation parameters
-global damp    = 0.30
+global damp    = 0.40
 global sig     = 1e-8
 global itermax = 50
 
@@ -131,6 +131,8 @@ global Vstar
 for param = [:c_coh, :y_coh, :l_coh, :a_coh, :v_coh, :VV_coh, :frac_phi]
     @eval global $param = OffsetArray(zeros(JJ, TT+1, SS), 1:JJ, 0:TT, 1:SS) ;
 end
+
+global frac_phi = OffsetArray(zeros(JJ, NP, TT+1, SS), 1:JJ, 1:NP, 0:TT, 1:SS) 
 
 for param = [:GAM, :beq, :beq_coh]
     @eval global $param = OffsetArray(zeros(JJ, TT+1, SS), 1:JJ, 0:TT, 1:SS) ;
@@ -210,18 +212,26 @@ omega[6] = 1.0/6.0
 #        omega(9) = 1d0/9d0
 omega[7:16] .= 0.0
 
+omega = omega.*0.5
 
 # set up population structure
+if pais == "MEX"
+    informal_prop = 0.587
+elseif pais == "CHL"
+    informal_prop = 0.39
+elseif pais == "CRI"
+    informal_prop = 0.421
+end
+
 for it in 0:TT
+    m[1, it, 1] = 1 - informal_prop
+    m[1, it, 2] = 1.0 - m[1, it, 1]
+    
+    itm = year2(it, -1)
+
     for ik in 1:SS
 
-        if ik == 1
-            m[1,it,ik] = 0.35
-        else
-            m[1,it,ik] = 0.65
-        end
         GAM[1,it,ik] = omega[1]
-        itm = year2(it, -1)
         for ij in 2:JJ
             m[ij,it,ik] = m[ij-1, itm,ik]*psi[ij, it]/(1.0+n_p)
             GAM[1,it, ik] = GAM[1, it, ik] + omega[ij]*m[ij, it,ik]
@@ -231,6 +241,7 @@ for it in 0:TT
         end
     end
 end
+
 
 # initialize asset grid
 grid_Cons_Grow(a, NA+1, a_l, a_u, a_grow)
@@ -268,7 +279,7 @@ eff[6,2] = 1.0938
 eff[7,2] = 1.061719
 eff[8,2] = 1.024641
 eff[9,2] = 1.403929
-eff[JR:JJ,2] = 0.0
+eff[JR:JJ,2] .= 0.0
 
 # initialize fixed effect
 dist_theta .= 1.0/float(NP)
@@ -414,6 +425,8 @@ CSV.write(full_save_path, df_by_cohort)
 kappa[1:TT] .= 0.5;
 
 global sig     = 1e-4
+global itermax = 50
+
 # calculate transition path without lsra
 lsra_on = false;
 global universal = true

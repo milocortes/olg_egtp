@@ -526,10 +526,13 @@ function aggregation(it)
 
     # calculate fraction of low and high households skills
     for ij in 1:JJ
-        for ik in 1:SS
-            frac_phi[ij, it, ik] = sum(phi[ij, :, :, :, it, ik])
+        for ip in 1:NP
+            for ik in 1:SS
+                frac_phi[ij, ip, it, ik] = sum(phi[ij, :, ip, :, it, ik])
+            end
         end
     end
+
 
     global SS
     m_coh = zeros(JJ,SS)
@@ -555,10 +558,10 @@ function aggregation(it)
             for ip in 1:NP
                 for is in 1:NS
                     for ik in 1:SS
-                        c_coh[ij, it, ik] = c_coh[ij, it, ik] + c[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
-                        l_coh[ij, it, ik] = l_coh[ij, it, ik] + l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
-                        y_coh[ij, it, ik] = y_coh[ij, it, ik] + eff[ij, ik]*theta[ip]*eta[is]*l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
-                        a_coh[ij, it, ik] = a_coh[ij, it, ik] + a[ia]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                        c_coh[ij, it, ik] = c_coh[ij, it, ik] + c[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
+                        l_coh[ij, it, ik] = l_coh[ij, it, ik] + l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
+                        y_coh[ij, it, ik] = y_coh[ij, it, ik] + eff[ij, ik]*theta[ip]*eta[is]*l[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
+                        a_coh[ij, it, ik] = a_coh[ij, it, ik] + a[ia]*phi[ij, ia, ip, is, it, ik]
 
                         # exclude households who die
                         if(ij >= JR && ia == 0 && (kappa[0] <= 1e-10 || kappa[1] <= 1e-10))
@@ -566,12 +569,12 @@ function aggregation(it)
                         end
 
                         if(aplus[ij, ia, ip, is, it, ik] < 1e-4)
-                            FLC[ij, it, ik] = FLC[ij, it, ik] + phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
+                            FLC[ij, it, ik] = FLC[ij, it, ik] + phi[ij, ia, ip, is, it, ik]
                         end 
     
-                        VV_coh[ij, it, ik] = VV_coh[ij, it, ik] + VV[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
-                        m_coh[ij, ik]      = m_coh[ij, ik] + phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]
-                        beq_coh[ij, it, ik] = beq_coh[ij, it, ik] + a[ia]*(1.0 + rn[it])* (1.0 - psi[ij, it])*phi[ij, ia, ip, is, it, ik]/frac_phi[ij, it, ik]/psi[ij, it] 
+                        VV_coh[ij, it, ik] = VV_coh[ij, it, ik] + VV[ij, ia, ip, is, it, ik]*phi[ij, ia, ip, is, it, ik]
+                        m_coh[ij, ik]      = m_coh[ij, ik] + phi[ij, ia, ip, is, it, ik]
+                        beq_coh[ij, it, ik] = beq_coh[ij, it, ik] + a[ia]*(1.0 + rn[it])* (1.0 - psi[ij, it])*(phi[ij, ia, ip, is, it, ik])/psi[ij, it] 
                     end
                 end
             end
@@ -652,7 +655,7 @@ function government(it)
         #pen[JR:JJ, it, 2] .= (kappa[it]*0.25)*(0.25*INC[itm])
         pen[JR:JJ, it, 1] .= kappa[it]*INC[itm]  
     end
-    
+
     PP[it] = 0.0
 
     for ij in JR:JJ
@@ -1014,6 +1017,7 @@ function check_grid(iamax, it)
     end
 
 end 
+
 
 
 ### Build parameters
