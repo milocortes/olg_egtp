@@ -16,7 +16,7 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "CHL"
+pais = "MEX"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -403,18 +403,31 @@ CSV.write(full_save_path, df_OLG_params)
 
 #### Guardamos datos a nivel de cohorte
 ## Cohort relative size
-m_to_df = OffsetArrays.no_offset_view(m[:,0])
+m_to_df_high = OffsetArrays.no_offset_view(m[:,0,1])
+m_to_df_low = OffsetArrays.no_offset_view(m[:,0,2])
+
 ## assets by cohort
-a_coh_to_df = OffsetArrays.no_offset_view(a_coh[:,0])
+a_coh_to_df_high = OffsetArrays.no_offset_view(a_coh[:,0,1])
+a_coh_to_df_low = OffsetArrays.no_offset_view(a_coh[:,0,2])
+
 ## income by cohort
-y_coh_to_df = OffsetArrays.no_offset_view(y_coh[:,0])
+y_coh_to_df_high = OffsetArrays.no_offset_view(y_coh[:,0,1])
+y_coh_to_df_low = OffsetArrays.no_offset_view(y_coh[:,0,2])
+
 ## labour hours by cohort
-l_coh_to_df = OffsetArrays.no_offset_view(l_coh[:,0])
+l_coh_to_df_high = OffsetArrays.no_offset_view(l_coh[:,0,1])
+l_coh_to_df_low = OffsetArrays.no_offset_view(l_coh[:,0,2])
+
 ## consumption by cohort
-c_coh_to_df = OffsetArrays.no_offset_view(c_coh[:,0])
+c_coh_to_df_high = OffsetArrays.no_offset_view(c_coh[:,0,1])
+c_coh_to_df_low = OffsetArrays.no_offset_view(c_coh[:,0,2])
 
 ## join data in data frame
-df_by_cohort = DataFrame(m = m_to_df, a_coh = a_coh_to_df, y_coh = y_coh_to_df, l_coh = l_coh_to_df, c_coh = c_coh_to_df)
+df_by_cohort = DataFrame(m_high = m_to_df_high, m_low = m_to_df_low,
+                         a_coh_high = a_coh_to_df_high, a_coh_low = a_coh_to_df_low, 
+                         y_coh_high = y_coh_to_df_high, y_coh_low = y_coh_to_df_low, 
+                         l_coh_high = l_coh_to_df_high, l_coh_low = l_coh_to_df_low, 
+                         c_coh_high = c_coh_to_df_high, c_coh_low = c_coh_to_df_low)
 
 ## save dataframe
 file_name = "DSOLG_probs_OLG_params_by_cohort_"*pais*".csv"
@@ -425,7 +438,7 @@ CSV.write(full_save_path, df_by_cohort)
 kappa[1:TT] .= 0.5;
 
 global sig     = 1e-4
-global itermax = 50
+global itermax = 20
 
 # calculate transition path without lsra
 lsra_on = false;
@@ -439,7 +452,7 @@ plot!([i for i in 20:5:75],  l_coh[1:12,40,1], label = "Hours Worked - Post-Refo
 
 using Plots
 
-plot([i for i in 20:5:75], y_coh[1:12,0,1] + pen[1:12,0,1], title = "Average life-cycle", label = "Labour-related Income - High Skill (Pre-Reforma)", 
+plot([i for i in 20:5:75], y_coh[1:12,0,1] + pen[1:12,0,1], title = "Average life-cycle"*"("*pais*")", label = "Labour-related Income - High Skill (Pre-Reforma)", 
                                                             linestyle=:dot, 
                                                             marker = :circle, 
                                                             markersize = 4,
