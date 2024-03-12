@@ -238,7 +238,11 @@ function foc(x_in)
     v_ind = v[ij_com, ia_com, ip_com, is_com, it_com, ik_com]
 
     # calculate the wage rate
-    wage = wn[it_com]*eff[ij_com, ik_com]*theta[ip_com]*eta[is_com]
+    if (ik_com==2) & (universal != true)
+        wage = w[it_com]*eff[ij_com, ik_com]*theta[ip_com]*eta[is_com]
+    else 
+        wage = wn[it_com]*eff[ij_com, ik_com]*theta[ip_com]*eta[is_com]
+    end
 
     # calculate available resources
     available = (1.0+rn[it_com])*a[ia_com] + beq[ij_com, it_com, ik_com] + pen[ij_com, it_com, ik_com] + v_ind
@@ -417,7 +421,13 @@ function solve_household(ij_in, it_in, ik_in)
                     # check for borrowing constraint
                     if(x_root < 0.0)
                         x_root = 0.0
-                        wage = wn[it]*eff[ij, ik_in]*theta[ip]*eta[is]
+                        
+                        if (ik_com==2) & (universal != true)
+                            wage = w[it]*eff[ij, ik_in]*theta[ip]*eta[is]
+                        else
+                            wage = wn[it]*eff[ij, ik_in]*theta[ip]*eta[is]
+                        end
+                        
                         v_ind = v[ij, ia, ip, is, it, ik_in]
                         #available = (1.0+rn[it])*a[ia] + pen[ij, it] + v_ind
                         available = (1.0+rn[it])*a[ia] + beq[ij, it, ik_in] + pen[ij, it, ik_in] + v_ind
@@ -690,8 +700,11 @@ function government(it)
     taxrev[4, it] = sum(taxrev[1:3, it])
 
     # get budget balancing social security contribution
-    taup[it] = PP[it]/(w[it]*LL[it])
-
+    if universal == false
+        taup[it] = PP[it]/(w[it]*LL[it]*informal_prop)
+    else
+        taup[it] = PP[it]/(w[it]*LL[it])
+    end
 end 
 
 
@@ -1082,7 +1095,7 @@ function DSOLG(calib_params, stress_params)
 
         println("INICIALIZAMOS VARIABLES")
         # number of transition periods
-        global TT = 140
+        global TT = 120
 
         # number of years the household lives
         global JJ = 16
@@ -1267,6 +1280,8 @@ function DSOLG(calib_params, stress_params)
 
         # set up population structure
         pais = calib_params["pais"] 
+
+        global informal_prop
 
         if pais == "MEX"
             informal_prop = 0.587

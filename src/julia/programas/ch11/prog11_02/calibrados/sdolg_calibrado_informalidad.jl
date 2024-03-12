@@ -215,6 +215,7 @@ omega[7:16] .= 0.0
 omega = omega.*0.5
 
 # set up population structure
+global informal_prop
 if pais == "MEX"
     informal_prop = 0.587
 elseif pais == "CHL"
@@ -369,6 +370,7 @@ pension_system = DataFrame(
     PEN = [pen[JR, 0, 1] + pen[JR, 0, 2], kappa[0]],
     PP = [PP[0], PP[0]/YY[0]*100]
 );
+
 capital_market
 labour_market
 good_market
@@ -438,7 +440,7 @@ CSV.write(full_save_path, df_by_cohort)
 kappa[1:TT] .= 0.5;
 
 global sig     = 1e-4
-global itermax = 20
+global itermax = 5
 
 # calculate transition path without lsra
 lsra_on = false;
@@ -475,6 +477,14 @@ plot!([i for i in 20:5:75], y_coh[1:12,40,2] + pen[1:12,40,2], label = "Labour-r
                                                             marker = :sticks, 
                                                             markersize = 4,
                                                             seriescolor = :red)
+
+
+pension_system = DataFrame(
+    etiqueta = ["valor", "(in %)"],
+    TAUP = [taup[0]*w[0]*LL[0], taup[0]*100], 
+    PEN = [pen[JR, TT, 1] + pen[JR, TT, 2], kappa[0]],
+    PP = [PP[TT], PP[TT]/YY[TT]*100]
+);
 
 #### 
 
