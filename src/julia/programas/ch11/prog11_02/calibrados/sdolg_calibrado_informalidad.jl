@@ -16,7 +16,7 @@ using OffsetArrays
 using Roots
 
 # Get parameters
-pais = "MEX"
+pais = "CRI"
 OLG_params = build_parameters(pais, "parametros_olg.csv")
 
 if pais == "MEX"
@@ -31,7 +31,7 @@ end
 #OLG_params["kappa"] = 0.3
 
 # number of transition periods
-global TT = 100
+global TT = 160
 
 # number of years the household lives
 global JJ = 16

@@ -335,7 +335,7 @@ end
 
 # subroutine for calculating prices
 function prices(it)
-
+    
     r[it] = Omega2*alpha*(KK[it]/LL[it])^(alpha-1.0)-delta
     w[it] = Omega2*(1.0-alpha)*(KK[it]/LL[it])^alpha
     rn[it] = r[it]*(1.0-taur[it])
@@ -658,8 +658,8 @@ function government(it)
 
     
     if universal
-        pen[JR:JJ, it, 1] .= (kappa[it]*0.5)*INC[itm]
-        pen[JR:JJ, it, 2] .= (kappa[it]*0.5)*INC[itm]
+        pen[JR:JJ, it, 1] .= kappa[it]*INC[itm]
+        pen[JR:JJ, it, 2] .= kappa[it]*INC[itm]
     else
         #pen[JR:JJ, it, 1] .= kappa[it]*(0.75*INC[itm])
         #pen[JR:JJ, it, 2] .= (kappa[it]*0.25)*(0.25*INC[itm])
@@ -698,7 +698,7 @@ function government(it)
     # get budget balancing social security contribution
 
     if universal == false
-        taup[it] = PP[it]/(w[it]*LL[it]*informal_prop)
+        taup[it] = PP[it]/(w[it]*LL[it]*(1-informal_prop))
     else
         taup[it] = PP[it]/(w[it]*LL[it])
     end
